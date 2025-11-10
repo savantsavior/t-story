@@ -1,5 +1,5 @@
 # t-story
-MIT Open-Source Falling Puzzle Game Using Godot Engine 4.5.1+
+MIT Open-Source Falling Block Puzzle Game Using Godot Engine 4.5.1+
 
 [Download free Godot Engine!](https://godotengine.org/)
 
