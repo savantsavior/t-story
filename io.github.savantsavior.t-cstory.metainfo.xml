@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>io.github.savantsavior.t-story</id>
+
+    <!-- AppStream licenses: metadata is CC0; project is MIT -->
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>MIT</project_license>
+
+    <name>T-Story 110%</name>
+    <summary>Tetris-style falling blocks puzzle with with a story</summary>
+
+    <description>
+        <p>
+            T-Story is a free, open-source tetris-style falling-blocks arcade puzzle for Linux.
+            It features crisp visuals, responsive controls, energetic music, and an
+            efficient engine inspired by classic handheld tetris gameplay.
+        </p>
+        <p>
+            Play solo or up to 3 players locally with keyboard, mouse, or USB/Bluetooth
+            controllers. Includes strong computer A.I. opponents and multiple game modes
+            in this modern tetris tribute.
+        </p>
+    </description>
+
+    <launchable type="desktop-id">io.github.savantsavior.t-story.desktop</launchable>
+
+    <provides>
+        <binary>godot-runner</binary>
+    </provides>
+
+    <categories>
+        <category>Game</category>
+        <category>ArcadeGame</category>
+    </categories>
+
+    <keywords>
+        <keyword>tetris</keyword>
+        <keyword>tetris-like</keyword>
+        <keyword>falling-blocks</keyword>
+        <keyword>puzzle</keyword>
+        <keyword>blocks</keyword>
+        <keyword>arcade</keyword>
+        <keyword>tetrominoes</keyword>
+        <keyword>block-puzzle</keyword>
+        <keyword>multiplayer</keyword>
+        <keyword>game</keyword>
+    </keywords>
+    <!-- Reverse-DNS developer id per guidelines -->
+    <developer id="io.github.savantsavior">
+        <name>Team BetaMax Heroes</name>
+    </developer>
+
+    <!-- Helpful links -->
+    <url type="homepage">https://github.com/savantsavior/t-story</url>
+    <url type="vcs-browser">https://github.com/savantsavior/t-story</url>
+    <url type="bugtracker">https://github.com/savantsavior/t-story/issues</url>
+
+    <!-- OARS 1.1: suitable for all ages (adjust if needed) -->
+    <content_rating type="oars-1.1">
+        <content_attribute id="violence-cartoon">none</content_attribute>
+        <content_attribute id="violence-fantasy">none</content_attribute>
+        <content_attribute id="violence-realistic">none</content_attribute>
+        <content_attribute id="violence-bloodshed">none</content_attribute>
+        <content_attribute id="violence-sexual">none</content_attribute>
+        <content_attribute id="drugs-alcohol">none</content_attribute>
+        <content_attribute id="drugs-narcotics">none</content_attribute>
+        <content_attribute id="drugs-tobacco">none</content_attribute>
+        <content_attribute id="sex-nudity">none</content_attribute>
+        <content_attribute id="sex-themes">none</content_attribute>
+        <content_attribute id="language-profanity">none</content_attribute>
+        <content_attribute id="language-humor">none</content_attribute>
+        <content_attribute id="language-discrimination">none</content_attribute>
+        <content_attribute id="social-chat">none</content_attribute>
+        <content_attribute id="social-info">none</content_attribute>
+        <content_attribute id="social-audio">none</content_attribute>
+        <content_attribute id="social-location">none</content_attribute>
+        <content_attribute id="social-contacts">none</content_attribute>
+        <content_attribute id="money-purchasing">none</content_attribute>
+        <content_attribute id="money-gambling">none</content_attribute>
+    </content_rating>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://github.com/savantsavior/t-story/blob/main/project_t-story/Screen_Shots/Second-TS3-Playing.png</image>
+            <caption>Gameplay</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://github.com/savantsavior/t-story/blob/main/project_t-story/Screen_Shots/First-TS3-Title.png</image>
+            <caption>Title screen</caption>
+        </screenshot>
+    </screenshots>
+
+    <releases>
+        <release version="3.0.0" date="2025-11-20">
+            <description>
+                <p>Packaging improvements for Flatpak/Flathub, updated metadata and screenshots.</p>
+            </description>
+        </release>
+    </releases>
+</component>

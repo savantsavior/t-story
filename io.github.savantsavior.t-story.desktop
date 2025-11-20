@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=T-Story 110%
+GenericName=Puzzle Game
+Comment=Tetris-style falling blocks puzzle with with a story
+Exec=godot-runner
+Icon=io.github.savantsavior.t-story
+Categories=Game;ArcadeGame;
+Keywords=tetris;tetris-like;falling-blocks;puzzle;blocks;arcade;tetrominoes;multiplayer;game;
+Terminal=false
+StartupNotify=true
