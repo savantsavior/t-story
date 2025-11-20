@@ -135,6 +135,9 @@ func _ready():
 	Sprites.SpriteImage[0] = load("res://media/images/backgrounds/FadingBlackBG.png")
 	Sprites.SpriteActive[0] = true
 
+	Sprites.SpriteImage[1] = load("res://media/images/backgrounds/MIT_License.png")
+	Sprites.SpriteActive[1] = true
+
 	Sprites.SpriteImage[5] = load("res://media/images/logos/GodotLogo.png")
 	Sprites.SpriteActive[5] = true
 

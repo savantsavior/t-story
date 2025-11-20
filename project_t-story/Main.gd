@@ -56,10 +56,7 @@ func _ready():
 
 	InputCore.HTML5input = InputCore.InputKeyboard
 	
-	if (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive):
-		ScreensCore.ScreenToDisplay = ScreensCore.HTML5Screen
-	else:
-		ScreensCore.ScreenToDisplay = ScreensCore.GodotScreen
+	ScreensCore.ScreenToDisplay = ScreensCore.FASScreen
 
 	pass
 

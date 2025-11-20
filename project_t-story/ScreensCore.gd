@@ -303,7 +303,8 @@ func DisplayGodotScreen():
 		if InputCore.MouseButtonLeftPressed == true || InputCore.KeyboardSpacebarPressed == true || InputCore.JoyButtonOne[InputCore.InputAny] == InputCore.Pressed:  AudioCore.PlayEffect(1, 1)
 
 	if ScreenFadeStatus == FadingToBlack && ScreenFadeTransparency == 0.5:
-		ScreenToDisplayNext = FASScreen
+		ScreenToDisplayNext = TitleScreen
+		AudioCore.PlayMusic(0,1)
 		InputCore.DelayAllUserInput = 15
 
 	pass
@@ -314,7 +315,7 @@ func DisplayFASScreen():
 
 		RenderingServer.set_default_clear_color(Color(0.1, 0.1, 0.1, 1.0))
 
-		VisualsCore.DrawSprite(7, VisualsCore.ScreenWidth/2.0, VisualsCore.ScreenHeight/2.0, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+		VisualsCore.DrawSprite(1, VisualsCore.ScreenWidth/2.0, VisualsCore.ScreenHeight/2.0, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
 		ScreenDisplayTimer = (160*2)
 
@@ -331,10 +332,10 @@ func DisplayFASScreen():
 		if InputCore.MouseButtonLeftPressed == true || InputCore.KeyboardSpacebarPressed == true || InputCore.JoyButtonOne[InputCore.InputAny] == InputCore.Pressed:  AudioCore.PlayEffect(1, 1)
 
 	if ScreenFadeStatus == FadingToBlack && ScreenFadeTransparency == 0.5:
-		ScreenToDisplayNext = TitleScreen
+		ScreenToDisplayNext = HTML5Screen
 		InputCore.DelayAllUserInput = 15
 
-		AudioCore.PlayMusic(0, true)
+#		AudioCore.PlayMusic(0, true)
 
 	pass
 
