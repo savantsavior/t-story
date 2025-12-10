@@ -579,6 +579,10 @@ func DrawText(index, text, x, y, horizontalJustification, fontSize, scaleX, scal
 		fontToUseIndex = 0
 		fontSize = 20
 		newTextDrawingOffsetY = 15.0
+	elif fontSize == 8:
+		fontToUseIndex = 0
+		fontSize = 17
+		newTextDrawingOffsetY = 15.0
 	elif fontSize == 21:
 		fontToUseIndex = 0
 		newTextDrawingOffsetY = 15.0
@@ -807,11 +811,11 @@ func LoadAboutScreenTexts():
 
 	AddAboutScreenText("Playing Level # 3 Music:", 0.0)
 	AddAboutScreenText("''Voyage'' by LEMMiNO", 1.0)
-	AddAboutScreenText("Music promoted by outube.com", 1.0)
+	AddAboutScreenText("Music promoted by youtube.com", 1.0)
 
 	AddAboutScreenText("Playing Level # 4 Music:", 0.0)
 	AddAboutScreenText("''Deja Vu'' by RYYZN", 1.0)
-	AddAboutScreenText("Music promoted by com", 1.0)
+	AddAboutScreenText("Music promoted by youtube.com", 1.0)
 
 	AddAboutScreenText("Playing Level # 5 Music:", 0.0)
 	AddAboutScreenText("''Dragon Slayer'' by Makai Symphony | soundcloud.com/makai-symphony", 1.0)

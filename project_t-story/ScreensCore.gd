@@ -629,8 +629,9 @@ func DisplayOptionsScreen():
 			InterfaceCore.CreateButton (6, (VisualsCore.ScreenWidth/2.0), VisualsCore.ScreenHeight-25)
 
 			if (InputCore.NumberOfGamepads > 0 or InputCore.num_controllers > 0):
-				VisualsCore.DrawText(VisualsCore.TextCurrentIndex, "PRESS [F1] TO MAP GAME CONTROLLER[S]", 0.0, (VisualsCore.ScreenHeight/2.0)+250, 1, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
-		elif (JoystickSetupIndex == JoySetup1Up):
+				VisualsCore.DrawText(VisualsCore.TextCurrentIndex, "PRESS [F1] TO MAP GAME CONTROLLER[S]", 0.0, (VisualsCore.ScreenHeight/2.0)+250, 1, 8, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+
+		if (JoystickSetupIndex == JoySetup1Up):
 			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, "PRESS [UP] ON GAMEPAD 1", 0.0, VisualsCore.ScreenHeight/2.0, 1, 45, 1.0, 1.0, 0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0)
 		elif (JoystickSetupIndex == JoySetup1Down):
 			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, "PRESS [DOWN] ON GAMEPAD 1", 0.0, VisualsCore.ScreenHeight/2.0, 1, 45, 1.0, 1.0, 0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0)

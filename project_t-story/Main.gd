@@ -30,7 +30,7 @@
 #                                       "T-Story 110%"
 #                                @>-/---------- ---------\-<@
 #
-#                                 Retail Triple Final Beta 1
+#                                 Retail Triple Final Beta 2
 #
 #                       HTML5 Enabled Desktop/Laptop Internet Browsers
 #
