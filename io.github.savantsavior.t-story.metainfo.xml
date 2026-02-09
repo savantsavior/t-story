@@ -9,15 +9,30 @@
     <name>T-Story 110%</name>
     <summary>Tetris-style falling blocks puzzle with with a story</summary>
 
-    <description>
-        <p>
-           Tetris-like falling blocks puzzle game with cooperative 3-player local multiplayer and a story...
-        </p>
-        <p>
-            T-Story 110% is a free, open-source tetris-style falling-blocks arcade puzzle for Linux. It features beautiful visuals, responsive controls, amazing music, and an efficient puzzle engine inspired by the original classic handheld tetris game.Play with 2 other players(human/A.I.) and cooperate to progress to new levels and win the game.  This is not a competition game version, all three players must work together with the other two.  If one player loses the other two players lose as well. Game includes a story with abstract artwork by a professional artist that progresses after each clear of a level.
-Do you all have the tetris skills necessary to unite and battle together to the end?
-        </p>
-    </description>
+   <description>
+    <p>
+    Tetris-like falling blocks puzzle game with cooperative 3-player local multiplayer and a story...
+    </p>
+
+    <p><br/></p>
+
+    <p>
+    T-Story 110% is a free, open-source tetris-style falling-blocks arcade puzzle game only for Linux. It features beautiful visuals, responsive controls (keyboard, mouse, &amp; game controllers), amazing music, and an efficient puzzle engine inspired by the original classic handheld tetris game.
+    </p>
+
+    <p><br/></p>
+
+    <p>
+    Play with two other players (human/A.I.) and cooperate to progress to new levels and win the game. This is not a competition, all three players must work together with the other two. If one player loses the other two players lose as well. Game includes a story with abstract artwork by a professional artist that progresses after each clear of a level.
+    </p>
+
+    <p><br/></p>
+
+    <p>
+    Do you all have the tetris skills necessary to unite and battle together to the end?
+    </p>
+</description>
+
 
     <launchable type="desktop-id">io.github.savantsavior.t-story.desktop</launchable>
 
@@ -93,7 +108,7 @@ Do you all have the tetris skills necessary to unite and battle together to the 
     </screenshots>
 
     <releases>
-        <release version="3.0.0" date="2025-11-20">
+        <release version="4.0.0" date="2025-11-20">
             <description>
                 <p>Major release featuring Flatpak packaging for Linux distribution!</p>
                 <ul>
