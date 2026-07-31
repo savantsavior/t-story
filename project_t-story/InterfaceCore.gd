@@ -76,7 +76,7 @@ func InitializeGUI(createTexts):
 		Buttons.ButtonImageIndex.append(40+index)
 		
 		if createTexts == true:
-			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, ButtonText[index], 0, -99999, 1, 24, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, ButtonText[index], 0, -99999, 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 		
 		Buttons.ButtonTextIndex.append(index)
 		Buttons.ButtonIndex.append(-1)
@@ -165,10 +165,10 @@ func DrawAllButtons():
 		if Buttons.ButtonIndex[index] > -1:
 			if Buttons.ButtonAnimationTimer[index] == 1:
 				Buttons.ButtonScale[index] = 0.95
-				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 22, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 0, 19, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 			elif Buttons.ButtonAnimationTimer[index] == 0:
 				Buttons.ButtonScale[index] = 1.0
-				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 24, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 
 			VisualsCore.DrawSprite(40+index, Buttons.ButtonScreenX[index], Buttons.ButtonScreenY[index], Buttons.ButtonScale[index], Buttons.ButtonScale[index], 0.0, 1.0, 1.0, 1.0, 1.0)
 
@@ -386,7 +386,7 @@ func CreateIcon(spriteIndex, screenX, screenY, text):
 	RenderingServer.canvas_item_set_transform(VisualsCore.Sprites.ci_rid[Icons.IconSprite[NumberOfIconsOnScreen]], Transform2D(0.0, Vector2(1.0, 1.0), 0.0, Vector2(VisualsCore.Sprites.SpriteScreenX[Icons.IconSprite[NumberOfIconsOnScreen]] - (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[NumberOfIconsOnScreen]] / 2.0), VisualsCore.Sprites.SpriteScreenY[Icons.IconSprite[NumberOfIconsOnScreen]] - (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[NumberOfIconsOnScreen]] / 2.0))))
 
 	Icons.IconText[NumberOfIconsOnScreen] = text
-	Icons.IconTextIndex[NumberOfIconsOnScreen] = VisualsCore.DrawText(VisualsCore.TextCurrentIndex, text, (screenX-3.0)-(VisualsCore.ScreenWidth/2.0), screenY-23, 1, 35, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+	Icons.IconTextIndex[NumberOfIconsOnScreen] = VisualsCore.DrawText(VisualsCore.TextCurrentIndex, text, (screenX-3.0)-(VisualsCore.ScreenWidth/2.0), screenY-9, 1, 0, 35, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 
 	NumberOfIconsOnScreen+=1
 

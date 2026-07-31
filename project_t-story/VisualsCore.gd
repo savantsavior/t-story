@@ -103,8 +103,8 @@ var PlayfieldSpriteCurrentIndex = []
 
 var KeyboardControlsAlphaTimer;
 
-var KeepAspectRatio
-var FullScreenMode
+var KeepAspectRatio = 1
+var FullScreenMode = false
 
 #----------------------------------------------------------------------------------------
 func _ready():
@@ -137,6 +137,9 @@ func _ready():
 
 	Sprites.SpriteImage[1] = load("res://media/images/backgrounds/MIT_License.png")
 	Sprites.SpriteActive[1] = true
+
+	Sprites.SpriteImage[2] = load("res://media/images/backgrounds/BG_GameController.png")
+	Sprites.SpriteActive[2] = true
 
 	Sprites.SpriteImage[5] = load("res://media/images/logos/GodotLogo.png")
 	Sprites.SpriteActive[5] = true
@@ -394,6 +397,8 @@ func _ready():
 
 			if (index == 0):
 				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 500)
+			elif (index == 2):
+				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -25)
 			elif (index == 10):
 				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -25)
 			elif (index == 130):
@@ -414,6 +419,8 @@ func _ready():
 				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -5)
 			elif (index > 9999 && index < 19980):
 				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -2)
+			elif (index == 130):
+				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -5)
 			elif (index == 131):
 				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -99999)
 			elif (index == 132):
@@ -486,9 +493,12 @@ func SetFramesPerSecond(fpsValue):
 #----------------------------------------------------------------------------------------
 func SetFullScreenMode():
 	if (FullScreenMode == true):
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, 0)
+		if (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive || ScreensCore.OperatingSys == ScreensCore.OSAndroid):  DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, 0)
+		else:  DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, 0)
 	elif (FullScreenMode == false):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, 0)
+
+	InputCore.DelayAllUserInput = 20
 
 	pass
 
@@ -566,72 +576,15 @@ func DrawnTextChangeScaleRotation(index, scaleX, scaleY, rotations):
 
 #----------------------------------------------------------------------------------------
 # Godot Version 3.5 To 4.0 Beta 2+ Conversion By: "flairetic":
-func DrawText(index, text, x, y, horizontalJustification, fontSize, scaleX, scaleY, rotations, red, green, blue, alpha, outlineRed, outlineGreen, outlineBlue):
+func DrawText(index, text, x, y, horizontalJustification, fontToUse, fontSize, scaleX, scaleY, rotations, red, green, blue, alpha, outlineRed, outlineGreen, outlineBlue):
 	if ( index > (TextCurrentIndex-1) ):
 		Texts.TextImage.append(RichTextLabel.new())
 		add_child(Texts.TextImage[index])
 		TextIsUsed[index] = true
 
 	var newTextDrawingOffsetY = 0
-	var fontToUseIndex = 0
-	if fontSize == 24:
-		fontToUseIndex = 0
-		fontSize = 23
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 10:
-		fontToUseIndex = 0
-		fontSize = 20
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 8:
-		fontToUseIndex = 0
-		fontSize = 17
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 21:
-		fontToUseIndex = 0
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 15:
-		fontToUseIndex = 0
-		fontSize = 10
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 25:
-		fontToUseIndex = 0
-		newTextDrawingOffsetY = 15.0
-	elif fontSize == 60:
-		fontToUseIndex = 0
-		newTextDrawingOffsetY = 36.0
-	elif fontSize == 35:
-		fontSize = 32
-		fontToUseIndex = 0
-	elif fontSize == 12:
-		fontToUseIndex = 0
-	elif fontSize == 22:
-		fontToUseIndex = 0
-	elif fontSize == 34:
-		fontToUseIndex = 1
-		fontSize = 35
-	elif fontSize == 23:
-		fontToUseIndex = 1
-		fontSize = 18
-	elif fontSize == 13:
-		fontToUseIndex = 1
-		fontSize = 13
-	elif fontSize == 100:
-		fontToUseIndex = 0
-		fontSize = 65
-		newTextDrawingOffsetY = 80.0
-	elif fontSize == 57:
-		fontToUseIndex = 0
-		fontSize = 29
-	elif fontSize == 113:
-		fontToUseIndex = 1
-		fontSize = 75
-	elif fontSize == 45:
-		fontToUseIndex = 1
-		fontSize = 40
-
 	fontSize+=10
-	y-=8
-
+	y-=24
 
 	var xValue = x
 
@@ -652,7 +605,7 @@ func DrawText(index, text, x, y, horizontalJustification, fontSize, scaleX, scal
 		xValue = x - (textWidth/2)
 
 	Texts.TextImage[index].clip_contents = false
-	Texts.TextImage[index].add_theme_font_override("normal_font", FontTTF[fontToUseIndex])
+	Texts.TextImage[index].add_theme_font_override("normal_font", FontTTF[fontToUse])
 	Texts.TextImage[index].add_theme_font_size_override("normal_font_size", fontSize)
 	Texts.TextImage[index].add_theme_color_override("default_color", Color(red, green, blue, alpha))
 	Texts.TextImage[index].add_theme_constant_override("outline_size", 20.0)
@@ -710,7 +663,7 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("''T-Story 110%™''", 0.0)
 
 	AddAboutScreenText("Copyright 2026 By:", 1.0)
-	AddAboutScreenText("Team ''BetaMax Heroes''", 1.0)
+	AddAboutScreenText("Team: ''BetaMax Heroes''", 1.0)
 
 	AddAboutScreenText("Original Concept By:", 0.0)
 	AddAboutScreenText("Alexey Pajitnov", 1.0)
@@ -730,7 +683,7 @@ func LoadAboutScreenTexts():
 
 	AddAboutScreenText("Linux Flatpak Created & Submitted To Flathub By:", 0.0)
 	AddAboutScreenText("''junaid_develops''", 1.0)
-	AddAboutScreenText("[for hire pro on: Fiverr.com]", 1.0)
+	AddAboutScreenText("[For Hire Pro On: Fiverr.com]", 1.0)
 
 	AddAboutScreenText("''Godot Game Engine'' Recommended By:", 0.0)
 	AddAboutScreenText("''Yuri S.''", 1.0)
@@ -747,7 +700,7 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("''JeZxLee''", 1.0)
 
 	AddAboutScreenText("Godot " +DataCore.GODOT_VERSION+  " 2-D Game Engine Framework:", 0.0)
-	AddAboutScreenText("The ''Grand National GNX'' v2 Engine By:", 1.0)
+	AddAboutScreenText("The ''Grand National GNX'' v3 Engine By:", 1.0)
 	AddAboutScreenText("''JeZxLee''", 1.0)
 	AddAboutScreenText("''flairetic''", 1.0)
 
@@ -767,7 +720,7 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("''JeZxLee''", 1.0)
 	AddAboutScreenText("[Original Gameboy Version]", 1.0)
 
-	AddAboutScreenText("Puzzle Game Artificial Intelligence Programmers:", 0.0)
+	AddAboutScreenText("''Gift Of Sight™'' Puzzle Game A.I. Programmers:", 0.0)
 	AddAboutScreenText("Yiyuan Lee", 1.0)
 	AddAboutScreenText("''JeZxLee''", 1.0)
 	AddAboutScreenText("''flairetic''", 1.0)
@@ -961,10 +914,10 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText(" ", 1.0)
 	AddAboutScreenText("''You!''", 1.0)
 
-	AddAboutScreenText("A 110% By Team ''BetaMax Heroes''!", 0.0)
+	AddAboutScreenText("A 110% By Team: ''BetaMax Heroes''!", 0.0)
 	AddAboutScreenText(" ", 1.0)
 
-	DrawText(AboutTextsStartIndex, AboutTexts.AboutTextsText[AboutTextsStartIndex], ((ScreenWidth/2.0)+100.0), ScreenHeight+25, 0, 23, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[AboutTextsStartIndex-10], 0.0, 0.0, 0.0, 0.0)
+	DrawText(AboutTextsStartIndex, AboutTexts.AboutTextsText[AboutTextsStartIndex], ((ScreenWidth/2.0)+100.0), ScreenHeight+25, 0, 1, 23, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[AboutTextsStartIndex-10], 0.0, 0.0, 0.0, 0.0)
 
 	var screenY = ScreenHeight-300
 	for index in range(AboutTextsStartIndex+1, AboutTextsEndIndex):
@@ -977,7 +930,7 @@ func LoadAboutScreenTexts():
 
 		var fontSize = 23
 
-		DrawText(index, AboutTexts.AboutTextsText[index-10], 0, screenY, 1, fontSize, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[index-10], 1.0, 0.0, 0.0, 0.0)
+		DrawText(index, AboutTexts.AboutTextsText[index-10], 0, screenY, 1, 1, fontSize, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[index-10], 1.0, 0.0, 0.0, 0.0)
 
 	Texts.TextImage[AboutTextsEndIndex-2].global_position.y+=(ScreenHeight/2.0)
 	Texts.TextImage[AboutTextsEndIndex-1].global_position.y+=(ScreenHeight/2.0)

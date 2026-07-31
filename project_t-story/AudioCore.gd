@@ -35,13 +35,13 @@ func ConvertLinearToDB(volume):
 
 #----------------------------------------------------------------------------------------
 func _ready():
-	MusicVolume = 1.0
-	EffectsVolume = 0.5
+	MusicVolume = 0.5
+	EffectsVolume = 0.25
 
 	MusicPlayer = AudioStreamPlayer.new()
 	add_child(MusicPlayer)
 
-	var _warnErase = EffectPlayer.resize(3)
+	EffectPlayer.resize(3)
 	for plr in range(3):
 		EffectPlayer[plr] = []
 		EffectPlayer[plr].resize(EffectsTotal)
@@ -51,19 +51,18 @@ func _ready():
 	for plr in range(3):
 		for index in range(0, EffectsTotal):
 			EffectPlayer[plr][index] = AudioStreamPlayer.new()
-			if index == 0:  EffectPlayer[plr][index].stream = load("res://media/sound/MenuMove.ogg")
-			elif index == 1:  EffectPlayer[plr][index].stream = load("res://media/sound/MenuClick.ogg")
-			elif index == 2:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceRotate.ogg")
-			elif index == 3:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceDrop.ogg")
-			elif index == 4:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceCollision.ogg")
-			elif index == 5:  EffectPlayer[plr][index].stream = load("res://media/sound/LineCleared.ogg")
-			elif index == 6:  EffectPlayer[plr][index].stream = load("res://media/sound/4LinesCleared.ogg")
-			elif index == 7:  EffectPlayer[plr][index].stream = load("res://media/sound/IncomingLine.ogg")
-			elif index == 8:  EffectPlayer[plr][index].stream = load("res://media/sound/GameOver.ogg")
-			elif index == 9:  EffectPlayer[plr][index].stream = load("res://media/sound/LogoSay.ogg")
+			if index == 0:  EffectPlayer[plr][index].stream = load("res://media/sound/MenuMove.wav")
+			elif index == 1:  EffectPlayer[plr][index].stream = load("res://media/sound/MenuClick.wav")
+			elif index == 2:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceRotate.wav")
+			elif index == 3:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceDrop.wav")
+			elif index == 4:  EffectPlayer[plr][index].stream = load("res://media/sound/PieceCollision.wav")
+			elif index == 5:  EffectPlayer[plr][index].stream = load("res://media/sound/LineCleared.wav")
+			elif index == 6:  EffectPlayer[plr][index].stream = load("res://media/sound/4LinesCleared.wav")
+			elif index == 7:  EffectPlayer[plr][index].stream = load("res://media/sound/IncomingLine.wav")
+			elif index == 8:  EffectPlayer[plr][index].stream = load("res://media/sound/GameOver.wav")
+			elif index == 9:  EffectPlayer[plr][index].stream = load("res://media/sound/LogoSay.wav")
 			add_child(EffectPlayer[plr][index])
 			EffectPlayer[plr][index].set_volume_db(ConvertLinearToDB(EffectsVolume))
-			EffectPlayer[plr][index].stream.set_loop(false)
 		pass
 	pass
 
@@ -111,7 +110,6 @@ func PlayEffect(plr, index):
 	if index < 0 || index > (EffectsTotal-1):  return
 
 	EffectPlayer[plr][index].set_volume_db(ConvertLinearToDB(EffectsVolume))
-	EffectPlayer[plr][index].stream.set_loop(false)
 	EffectPlayer[plr][index].play(0.0)
 
 	pass

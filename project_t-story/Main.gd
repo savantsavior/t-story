@@ -17,8 +17,9 @@
 #
 # ------------------------------------------------------------------------------------------------
 #                              Cross-Platform / M.I.T. Open-Source
-#           "Grand National GNX" v2 Godot Engine 4.5.1+ Stable 2D Video Game Framework
+#           "Grand National GNX" v3 Godot Engine 4.7.1+ Stable 2D Video Game Framework
 # ------------------------------------------------------------------------------------------------
+#                                                           TM
 #                               "Fight To Win, Win For Love!"
 #  ___________                     _________ __                         ____ ___________  _   /\TM
 #  \__    ___/                    /   _____//  |_  ___________ ___.__. /_   /_   \   _  \/ \ / /
@@ -28,12 +29,12 @@
 #                                        \/          TM        \/           T U R B O   \/\/
 #                                       "T-Story 110%"
 #                                @>-/---------- ---------\-<@
-#                                  Release Candidate 3 FINAL
+#                                  Pre Retail Version 1.1.0
 #
 #                                  Linux Flatpak On Flathub
 #                       HTML5 Enabled Desktop/Laptop Internet Browsers
 #
-#                           (C)opyright 2026 - Team "BetaMax Heroes"
+#                          (C)opyright 2026 - Team: "BetaMax Heroes"
 # ------------------------------------------------------------------------------------------------
 extends Node2D
 
@@ -41,11 +42,10 @@ extends Node2D
 func _ready():
 	VisualsCore.SetFramesPerSecond(30)
 
-	VisualsCore.KeepAspectRatio = 1
+	DataCore.LoadOptionsAndHighScores()
 
 	if (ScreensCore.OperatingSys == ScreensCore.OSAndroid):  VisualsCore.FullScreenMode = true
-
-	DataCore.LoadOptionsAndHighScores()
+	if (ScreensCore.OperatingSys == ScreensCore.OSDesktop):  VisualsCore.FullScreenMode = true
 
 	VisualsCore.SetScreenStretchMode()
 
@@ -54,8 +54,6 @@ func _ready():
 	randomize()
 
 	InputCore.HTML5input = InputCore.InputKeyboard
-	
-	ScreensCore.ScreenToDisplay = ScreensCore.FASScreen
 
 	pass
 
@@ -66,4 +64,4 @@ func _process(_delta):
 
 	pass
 
-# A 110% By Team "BetaMax Heroes"!
+# A 110% By Team: "BetaMax Heroes"!

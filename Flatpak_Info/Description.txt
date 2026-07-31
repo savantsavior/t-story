@@ -1,0 +1,17 @@
+Game Name:
+T-Story 110%
+
+Keywords:
+Tetris, free, fun, open-source, falling, block, puzzle, game, Flatpak, Linux
+
+Short Description:
+Free MIT open-source multi-player falling block puzzle game with a story for Linux.
+
+Long Description:
+Tetris-like falling blocks puzzle game with cooperative 3-player local multiplayer and a story...
+
+T-Story 110% is a free, open-source tetris-style falling-blocks arcade puzzle game only for Linux. It features beautiful visuals, responsive controls (keyboard, mouse, & game controllers), amazing music, and an efficient puzzle engine inspired by the original classic handheld tetris game.
+
+Play with two other players (human/A.I.) and cooperate to progress to new levels and win the game. This is not a competition, all three players must work together with the other two. If one player loses the other two players lose as well. Game includes a story with abstract artwork by a professional artist that progresses after each clear of a level.
+
+Do you all have the tetris skills necessary to unite and battle together to the end?

@@ -105,6 +105,12 @@ var AndroidTouchTwoPressed = []
 var AndroidTouchTwoPressedX = []
 var AndroidTouchTwoPressedY = []
 
+var GamePadOneNameText
+var GamePadTwoNameText
+var GamePadThreeNameText
+
+var GameControllerNames = []
+
 #----------------------------------------------------------------------------------------
 func _ready():
 	set_process_input(true)
@@ -230,7 +236,7 @@ func _ready():
 	InputNames[4] = "Controller 1"
 	InputNames[5] = "Controller 2"
 	InputNames[6] = "Controller 3"
-	InputNames[7] = "C.P.U."
+	InputNames[7] = "A.I."
 
 	AndroidScreenData.resize(2)
 	AndroidScreenData[0] = -1
@@ -243,6 +249,11 @@ func _ready():
 	AndroidTouchTwoPressed.resize(5)
 	AndroidTouchTwoPressedX.resize(5)
 	AndroidTouchTwoPressedY.resize(5)
+
+	GameControllerNames.resize(3)
+	GameControllerNames[0] = "N.A."
+	GameControllerNames[1] = "N.A."
+	GameControllerNames[2] = "N.A."
 
 	pass
 
@@ -285,57 +296,61 @@ func _process(_delta):
 		if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonTwo[InputKeyboard] = Pressed
 
 	for index in range (0, 3):
-		for indexButton in range (0, 127):
-			if (JoyUpMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-				JoystickDirection[InputJoyOne+index] = JoyUp
-			elif (JoyDownMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-				JoystickDirection[InputJoyOne+index] = JoyDown
-			elif (JoyLeftMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-				JoystickDirection[InputJoyOne+index] = JoyLeft
-			elif (JoyRightMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-				JoystickDirection[InputJoyOne+index] = JoyRight
+		if ( (FoundGamepadOne == true && index == 0) || (FoundGamepadTwo == true && index == 1)  || (FoundGamepadThree == true && index == 2) ):
+			for indexButton in range (0, 127):
+				if (JoyUpMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+					JoystickDirection[InputJoyOne+index] = JoyUp
+				elif (JoyDownMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+					JoystickDirection[InputJoyOne+index] = JoyDown
+				elif (JoyLeftMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+					JoystickDirection[InputJoyOne+index] = JoyLeft
+				elif (JoyRightMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+					JoystickDirection[InputJoyOne+index] = JoyRight
 
-			if (ScreensCore.ScreenToDisplay != ScreensCore.HTML5Screen):
-				if (JoyButtonOneMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-					JoyButtonOne[InputJoyOne+index] = Pressed
-					InputCore.InputThatStartedNewGame = InputJoyOne+index
+				if (ScreensCore.ScreenToDisplay != ScreensCore.HTML5Screen):
+					if (JoyButtonOneMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+						JoyButtonOne[InputJoyOne+index] = Pressed
+						InputCore.InputThatStartedNewGame = InputJoyOne+index
 
-				if (JoyButtonTwoMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
-					JoyButtonTwo[InputJoyOne+index] = Pressed
+					if (JoyButtonTwoMapped[index][0] == 10+indexButton && Input.is_joy_button_pressed (index, indexButton) == true):
+						JoyButtonTwo[InputJoyOne+index] = Pressed
 
-		for indexAxis in range (0, 10):
-			if (JoyUpMapped[index][0] == indexAxis && Input.is_joy_button_pressed (index, indexAxis) == true):
-				JoystickDirection[InputJoyOne+index] = JoyUp
+			for indexAxis in range (0, 10):
+				if (JoyUpMapped[index][0] == indexAxis && Input.is_joy_button_pressed (index, indexAxis) == true):
+					JoystickDirection[InputJoyOne+index] = JoyUp
 
-	var velocityZero = Input.get_vector("Joy0LeftAnalogLeft", "Joy0LeftAnalogRight", "Joy0LeftAnalogUp", "Joy0LeftAnalogDown")
-	if (velocityZero.y < -0.85):
-		JoystickDirection[InputJoyOne] = JoyUp
-	elif (velocityZero.y > 0.85):
-		JoystickDirection[InputJoyOne] = JoyDown
-	elif (velocityZero.x < -0.85):
-		JoystickDirection[InputJoyOne] = JoyLeft
-	elif (velocityZero.x > 0.85):
-		JoystickDirection[InputJoyOne] = JoyRight
+	if (FoundGamepadOne == true):
+		var velocityZero = Input.get_vector("Joy0LeftAnalogLeft", "Joy0LeftAnalogRight", "Joy0LeftAnalogUp", "Joy0LeftAnalogDown")
+		if (velocityZero.y < -0.85):
+			JoystickDirection[InputJoyOne] = JoyUp
+		elif (velocityZero.y > 0.85):
+			JoystickDirection[InputJoyOne] = JoyDown
+		elif (velocityZero.x < -0.85):
+			JoystickDirection[InputJoyOne] = JoyLeft
+		elif (velocityZero.x > 0.85):
+			JoystickDirection[InputJoyOne] = JoyRight
 
-	var velocityOne = Input.get_vector("Joy1LeftAnalogLeft", "Joy1LeftAnalogRight", "Joy1LeftAnalogUp", "Joy1LeftAnalogDown")
-	if (velocityOne.y < -0.85):
-		JoystickDirection[InputJoyTwo] = JoyUp
-	elif (velocityOne.y > 0.85):
-		JoystickDirection[InputJoyTwo] = JoyDown
-	elif (velocityOne.x < -0.85):
-		JoystickDirection[InputJoyTwo] = JoyLeft
-	elif (velocityOne.x > 0.85):
-		JoystickDirection[InputJoyTwo] = JoyRight
+	if (FoundGamepadTwo == true):
+		var velocityOne = Input.get_vector("Joy1LeftAnalogLeft", "Joy1LeftAnalogRight", "Joy1LeftAnalogUp", "Joy1LeftAnalogDown")
+		if (velocityOne.y < -0.85):
+			JoystickDirection[InputJoyTwo] = JoyUp
+		elif (velocityOne.y > 0.85):
+			JoystickDirection[InputJoyTwo] = JoyDown
+		elif (velocityOne.x < -0.85):
+			JoystickDirection[InputJoyTwo] = JoyLeft
+		elif (velocityOne.x > 0.85):
+			JoystickDirection[InputJoyTwo] = JoyRight
 
-	var velocityTwo = Input.get_vector("Joy2LeftAnalogLeft", "Joy2LeftAnalogRight", "Joy2LeftAnalogUp", "Joy2LeftAnalogDown")
-	if (velocityTwo.y < -0.85):
-		JoystickDirection[InputJoyThree] = JoyUp
-	elif (velocityTwo.y > 0.85):
-		JoystickDirection[InputJoyThree] = JoyDown
-	elif (velocityTwo.x < -0.85):
-		JoystickDirection[InputJoyThree] = JoyLeft
-	elif (velocityTwo.x > 0.85):
-		JoystickDirection[InputJoyThree] = JoyRight
+	if (FoundGamepadThree == true):
+		var velocityTwo = Input.get_vector("Joy2LeftAnalogLeft", "Joy2LeftAnalogRight", "Joy2LeftAnalogUp", "Joy2LeftAnalogDown")
+		if (velocityTwo.y < -0.85):
+			JoystickDirection[InputJoyThree] = JoyUp
+		elif (velocityTwo.y > 0.85):
+			JoystickDirection[InputJoyThree] = JoyDown
+		elif (velocityTwo.x < -0.85):
+			JoystickDirection[InputJoyThree] = JoyLeft
+		elif (velocityTwo.x > 0.85):
+			JoystickDirection[InputJoyThree] = JoyRight
 
 	for index in range (0, 8):
 		if (JoystickDirection[index] != JoyCentered):
@@ -393,7 +408,7 @@ func _input(event):
 		MouseButtonLeftPressed = false
 		TouchTwoPressed = false
 
-	if ScreensCore.ScreenFadeStatus != ScreensCore.FadingIdle:  return false
+	if ScreensCore.ScreenFadeStatus != ScreensCore.FadingIdle:  return
 
 	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid || ScreensCore.VideoAndroid == true):
 		if event is InputEventKey:

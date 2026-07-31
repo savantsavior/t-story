@@ -25,7 +25,7 @@ var HighScoreScore = []
 var PlayerWithHighestScore
 var NewHighScoreRank
 
-const FILE_NAME = "user://TetriStory-3_0_3b-game-data.json"
+const FILE_NAME = "user://TetriStory-Pre-Retail1a-game-data.json"
 var godot_Temp_Version = Engine.get_version_info()
 var GODOT_VERSION = godot_Temp_Version.string
 
@@ -66,15 +66,15 @@ func CheckForNewHighScore():
 func ClearHighScores():
 	for mode in range(0, 6):
 		HighScoreName[mode][0] = "JeZxLee"
-		HighScoreName[mode][1] = "junaid_develops - Fiverr.com"
-		HighScoreName[mode][2] = "flairetic"
-		HighScoreName[mode][3] = "EvanR"
-		HighScoreName[mode][4] = "Daotheman"
-		HighScoreName[mode][5] = "theweirdn8"
-		HighScoreName[mode][6] = "mattmatteh"
-		HighScoreName[mode][7] = "Oshi Bobo"
-		HighScoreName[mode][8] = "D.J. Fading Twilight"
-		HighScoreName[mode][9] = "Godot Engine Version 4.5.1+"
+		HighScoreName[mode][1] = "Alexey Pajitnov"
+		HighScoreName[mode][2] = "junaid_develops - Fiverr.com"
+		HighScoreName[mode][3] = "flairetic"
+		HighScoreName[mode][4] = "EvanR"
+		HighScoreName[mode][5] = "Daotheman"
+		HighScoreName[mode][6] = "theweirdn8"
+		HighScoreName[mode][7] = "mattmatteh"
+		HighScoreName[mode][8] = "Oshi Bobo"
+		HighScoreName[mode][9] = "Godot Engine ver. 4.7.1+"
 
 		HighScoreLevel[mode][0] = 10
 		HighScoreLevel[mode][1] = 9
@@ -121,7 +121,8 @@ func LoadOptionsAndHighScores():
 	HighScoreLevel = config.get_value("HighScores", "HighScoreLevel")
 	HighScoreScore = config.get_value("HighScores", "HighScoreScore")
 	VisualsCore.KeepAspectRatio = config.get_value("Options", "KeepAspectRatio")
-	LogicCore.DisableMultiplayer = config.get_value("Options", "DisableMultiplayer")
+
+	LogicCore.AIsystemToUse = config.get_value("Options", "AIsystemToUse")
 
 	InputCore.JoyUpMapped = config.get_value("Options", "JoyUpMapped")
 	InputCore.JoyDownMapped = config.get_value("Options", "JoyDownMapped")
@@ -148,7 +149,8 @@ func SaveOptionsAndHighScores():
 	config.set_value("HighScores", "HighScoreLevel", HighScoreLevel)
 	config.set_value("HighScores", "HighScoreScore", HighScoreScore)
 	config.set_value("Options", "KeepAspectRatio", VisualsCore.KeepAspectRatio)
-	config.set_value("Options", "DisableMultiplayer", LogicCore.DisableMultiplayer)
+
+	config.set_value("Options", "AIsystemToUse", LogicCore.AIsystemToUse)
 
 	config.set_value("Options", "JoyUpMapped", InputCore.JoyUpMapped)
 	config.set_value("Options", "JoyDownMapped", InputCore.JoyDownMapped)
