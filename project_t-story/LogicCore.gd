@@ -1897,6 +1897,145 @@ func GetHumanPlayerTouchTwoMoves(player):
 #
 
 # Below A.I. Source Code Function Written By "JeZxLee"
+#---------------------------------------------------------------------------------------------------
+#   "Near-Perfect" Tetris A.I. by Yiyuan Lee - faithful port, evaluated on a private board copy.
+#   Features are measured AFTER the player's full rows are removed, holes count every empty cell
+#   below a block, and each move is scored with a one-piece lookahead (current + next piece).
+#---------------------------------------------------------------------------------------------------
+const LEE_AGGREGATE_HEIGHT = -0.510066
+const LEE_COMPLETED_LINES = 0.760666
+const LEE_HOLES = -0.35663
+const LEE_BUMPINESS = -0.184483
+
+func AIBoardCopy(player):
+	# 1 = blocked exactly as PieceCollision() sees it (falling/shadow pieces are ignored), 0 = empty.
+	var board = []
+	board.resize(15)
+	for x in range(15):
+		board[x] = []
+		board[x].resize(26)
+		for y in range(26):
+			var value = PlayfieldNew[player][x][y]
+			if ( (value > 0 && value < 40) || value == 255 || value > 99999 ):
+				board[x][y] = 1
+			else:
+				board[x][y] = 0
+	return(board)
+
+func AIPieceFits(board, piece, rotation, pieceX, pieceY):
+	var box = 1
+	for y in range(0, 4):
+		for x in range(0, 4):
+			if (PieceData[piece][rotation][box] > 0):
+				var boardX = pieceX + x
+				var boardY = pieceY + y
+				if (boardX < 0 || boardX > 14 || boardY < 0 || boardY > 25):  return(false)
+				if (board[boardX][boardY] != 0):  return(false)
+			box+=1
+	return(true)
+
+func AIDropAndPlace(board, piece, rotation, pieceX, startY):
+	# Returns a NEW board with the piece dropped straight down from startY, or null if it cannot start there.
+	if (AIPieceFits(board, piece, rotation, pieceX, startY) == false):  return(null)
+	var pieceY = startY
+	while (AIPieceFits(board, piece, rotation, pieceX, pieceY+1) == true):
+		pieceY+=1
+	var placed = []
+	placed.resize(15)
+	for x in range(15):
+		placed[x] = board[x].duplicate()
+	var box = 1
+	for y in range(0, 4):
+		for x in range(0, 4):
+			if (PieceData[piece][rotation][box] > 0):
+				placed[pieceX+x][pieceY+y] = 1
+			box+=1
+	return(placed)
+
+func AIEntryY(board, piece, rotation, pieceX):
+	# First row (from the top) where the piece fits in this column: used for the next-piece lookahead.
+	for y in range(0, 9):
+		if (AIPieceFits(board, piece, rotation, pieceX, y) == true):  return(y)
+	return(-1)
+
+func AIClearOwnLines(board):
+	# Lee's features are measured after clearing. In this co-op mode a row clears when all three
+	# playfields are full, so the player's own full row is scored (and removed) as a completed line.
+	var cleared = 0
+	var y = 23
+	while (y >= 5):
+		var full = true
+		for x in range(2, 12):
+			if (board[x][y] == 0):
+				full = false
+				break
+		if (full == true):
+			cleared+=1
+			for moveY in range(y, 5, -1):
+				for x in range(2, 12):
+					board[x][moveY] = board[x][moveY-1]
+			for x in range(2, 12):
+				board[x][5] = 0
+		else:
+			y-=1
+	return(cleared)
+
+func AIScoreBoard(board, completedLines):
+	var aggregateHeight = 0
+	var holes = 0
+	var bumpiness = 0
+	var previousHeight = -1
+	for x in range(2, 12):
+		var height = 0
+		var blockAbove = false
+		for y in range(5, 24):
+			if (board[x][y] != 0):
+				if (blockAbove == false):
+					height = (24 - y)
+					blockAbove = true
+			elif (blockAbove == true):
+				holes+=1
+		aggregateHeight+=height
+		if (previousHeight >= 0):
+			bumpiness+=abs(height - previousHeight)
+		previousHeight = height
+	return( (LEE_AGGREGATE_HEIGHT * aggregateHeight) + (LEE_COMPLETED_LINES * completedLines)
+			+ (LEE_HOLES * holes) + (LEE_BUMPINESS * bumpiness) )
+
+func ComputeNearPerfectMove(player):
+	var best = AIBestMove(AIBoardCopy(player), Piece[player], NextPiece[player], PiecePlayfieldY[player], PiecePlayfieldX[player], PieceRotation[player])
+	BestMoveX[player] = best[0]
+	BestRotation[player] = best[1]
+
+func AIBestMove(board, piece, nextPiece, startY, fallbackX, fallbackRotation):
+	# Pure search (no game state touched): returns [bestX, bestRotation].
+	var bestScore = -INF
+	var bestX = fallbackX
+	var bestRotation = fallbackRotation
+	for rotation in range(1, MaxRotationArray[piece]+1):
+		for pieceX in range(0, 12):
+			var afterCurrent = AIDropAndPlace(board, piece, rotation, pieceX, startY)
+			if (afterCurrent == null):  continue
+			var currentLines = AIClearOwnLines(afterCurrent)
+			var moveScore = -INF
+			for nextRotation in range(1, MaxRotationArray[nextPiece]+1):
+				for nextX in range(0, 12):
+					var entryY = AIEntryY(afterCurrent, nextPiece, nextRotation, nextX)
+					if (entryY < 0):  continue
+					var afterNext = AIDropAndPlace(afterCurrent, nextPiece, nextRotation, nextX, entryY)
+					if (afterNext == null):  continue
+					var nextLines = AIClearOwnLines(afterNext)
+					moveScore = max(moveScore, AIScoreBoard(afterNext, currentLines + nextLines))
+			if (moveScore == -INF):
+				# The next piece cannot be placed after this move: judge the move alone, heavily penalised.
+				moveScore = AIScoreBoard(afterCurrent, currentLines) - 1000.0
+			if (moveScore > bestScore):
+				bestScore = moveScore
+				bestX = pieceX
+				bestRotation = rotation
+	return([bestX, bestRotation])
+
+#---------------------------------------------------------------------------------------------------
 func ComputeComputerPlayerMove(player):
 	if (AIsystemToUse == 0):
 		if ( DoAnyPlayersHaveCompletedLine() == true ):
@@ -2042,109 +2181,7 @@ func ComputeComputerPlayerMove(player):
 			return
 
 		if (CPUComputedBestMove[player] == false):
-			for posX in range (0, 12):
-				for rot in range (1, MaxRotationArray[Piece[player]]+1):
-					MovePieceCollision[player][posX][rot] = true
-
-#-- Compute, prioritize, & store all player moves ------------------------------
-			for NewCPUPieceTestX in range (0, 12):
-				for NewCPURotationTest in range (1, MaxRotationArray[Piece[player]]+1):
-					TEMP_PieceRotation = PieceRotation[player]
-					TEMP_PiecePlayfieldX = PiecePlayfieldX[player]
-					TEMP_PiecePlayfieldY = PiecePlayfieldY[player]
-
-					PiecePlayfieldX[player] = NewCPUPieceTestX
-					PieceRotation[player] = NewCPURotationTest
-
-					MovePieceCollision[player][NewCPUPieceTestX][NewCPURotationTest] = false
-					if (PieceCollision(player) == CollisionNotTrue):
-						for posY in range(PiecePlayfieldY[player], 23):
-							PiecePlayfieldY[player] = posY
-							if ( PieceCollision(player) == CollisionWithPlayfield ):
-								PiecePlayfieldY[player]-=1
-
-								AddCurrentPieceToPlayfieldMemory(player, Fallen)
-
-								var heightTemp
-								var bump = []
-								bump.resize(13)
-								for bumpZero in range(13):
-									bump[bumpZero] = 0
-
-								for posX in range(2, 12):
-									heightTemp = 0
-									for posYtwo in range(23, 6, -1):
-										if (  (PlayfieldNew[player][posX][posYtwo] == 0) && ( (PlayfieldNew[player][posX][posYtwo-1] > 30 && PlayfieldNew[player][posX][posYtwo-1] < 40) )  ):
-											MoveTrappedHoles[player][NewCPUPieceTestX][NewCPURotationTest]+=1
-
-										if (PlayfieldNew[player][posX][posYtwo] > 30 && PlayfieldNew[player][posX][posYtwo] < 40):
-											heightTemp = (24-posYtwo)
-
-									if (PlayfieldNew[player][posX][5] > 30 && PlayfieldNew[player][posX][5] < 40 ):  heightTemp+=1
-
-									bump[posX] = heightTemp
-									MoveAggregateHeight[player][NewCPUPieceTestX][NewCPURotationTest]+= heightTemp
-
-								var checkBumps = 0
-								checkBumps+=abs(bump[2]-bump[3])
-								checkBumps+=abs(bump[3]-bump[4])
-								checkBumps+=abs(bump[4]-bump[5])
-								checkBumps+=abs(bump[5]-bump[6])
-								checkBumps+=abs(bump[6]-bump[7])
-								checkBumps+=abs(bump[7]-bump[8])
-								checkBumps+=abs(bump[8]-bump[9])
-								checkBumps+=abs(bump[9]-bump[10])
-								checkBumps+=abs(bump[10]-bump[11])
-
-								MoveBumpiness[player][NewCPUPieceTestX][NewCPURotationTest] = checkBumps
-
-								var boxTotal
-								for y in range(4, 24):
-									boxTotal = 0
-									for p in range(3):
-										for x in range (2, 12):
-											if ( (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40) ):
-												boxTotal+=1
-
-									if (boxTotal == 30):
-										MoveCompletedLines[player][NewCPUPieceTestX][NewCPURotationTest]+=1
-
-								DeleteCurrentPieceFromPlayfieldMemory(player, Temp)
-
-								PieceRotation[player] = TEMP_PieceRotation
-								PiecePlayfieldX[player] = TEMP_PiecePlayfieldX
-								PiecePlayfieldY[player] = TEMP_PiecePlayfieldY
-								
-								break
-					else:
-						CPUComputedBestMove[player] = false
-
-						MovePieceCollision[player][NewCPUPieceTestX][NewCPURotationTest] = true
-						PieceRotation[player] = TEMP_PieceRotation
-						PiecePlayfieldX[player] = TEMP_PiecePlayfieldX
-						PiecePlayfieldY[player] = TEMP_PiecePlayfieldY
-
-#-- Choose best move & rotation in either left or right direction ----------------------------------
-			var TEMP_BestValue = -9999999999.0
-			for posX in range (0, 12):
-				for rot in range (1, MaxRotationArray[Piece[player]]+1):
-					if (MovePieceCollision[player][posX][rot] == false):
-
-#						A.I. Algorithm By Yiyuan Lee
-						var testValue = ( (-0.510066 * MoveAggregateHeight[player][posX][rot])
-									+(0.760666 * MoveCompletedLines[player][posX][rot])
-									+(-0.35663 * MoveTrappedHoles[player][posX][rot])
-									+(-0.184483 * MoveBumpiness[player][posX][rot]) )
-
-						print("player=", player, " / posX=", posX, " / rot=", rot, " / testValue=", testValue, " / Height=", MoveAggregateHeight[player][posX][rot], " / Comp.Lines=", MoveCompletedLines[player][posX][rot], " / Trap.Holes=", MoveTrappedHoles[player][posX][rot], " / Bumpiness=", MoveBumpiness[player][posX][rot])
-
-						if (testValue >= TEMP_BestValue):
-							TEMP_BestValue = testValue
-							BestMoveX[player] = posX
-							BestRotation[player] = rot
-
-			print("BestMoveX=", BestMoveX[player], " / BestRotation=", BestRotation[player])
-			print("-----------------------------------------------------------------------------------")
+			ComputeNearPerfectMove(player)
 
 			CPUComputedBestMove[player] = true
 			MovedToBestMove[player] = false
