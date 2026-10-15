@@ -172,7 +172,7 @@ func DrawAllButtons():
 
 			VisualsCore.DrawSprite(40+index, Buttons.ButtonScreenX[index], Buttons.ButtonScreenY[index], Buttons.ButtonScale[index], Buttons.ButtonScale[index], 0.0, 1.0, 1.0, 1.0, 1.0)
 
-			if (index == ButtonSelectedByKeyboard && NumberOfButtonsOnScreen > 1 && ScreensCore.OperatingSys != ScreensCore.OSAndroid):
+			if (index == ButtonSelectedByKeyboard && NumberOfButtonsOnScreen > 1):
 				VisualsCore.DrawSprite(50, (VisualsCore.ScreenWidth/2.0)-154.0, Buttons.ButtonScreenY[index], 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
 				VisualsCore.DrawSprite(51, (VisualsCore.ScreenWidth/2.0)+154.0, Buttons.ButtonScreenY[index], 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
 
@@ -215,17 +215,17 @@ func ThisButtonWasPressed(buttonToCheck):
 
 					InputCore.DelayAllUserInput = 4
 
-				if ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyOne] == InputCore.Pressed && InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyOne][0] < 30) ):
+				if ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyOne] == InputCore.Pressed && ScreensCore.JoystickSetupIndex == ScreensCore.JoySetupNotStarted) ):#InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyOne][0] < 30) ):
 					if buttonToCheck == ButtonSelectedByKeyboard:
 						Buttons.ButtonAnimationTimer[ButtonSelectedByKeyboard] = 2
 						AudioCore.PlayEffect(1, 1)
 						InputCore.DelayAllUserInput = 30
-				elif ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyTwo] == InputCore.Pressed && InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyTwo][0] < 30) ):
+				elif ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyTwo] == InputCore.Pressed && ScreensCore.JoystickSetupIndex == ScreensCore.JoySetupNotStarted) ):#InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyTwo][0] < 30) ):
 					if buttonToCheck == ButtonSelectedByKeyboard:
 						Buttons.ButtonAnimationTimer[ButtonSelectedByKeyboard] = 2
 						AudioCore.PlayEffect(1, 1)
 						InputCore.DelayAllUserInput = 30
-				elif ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyThree] == InputCore.Pressed && InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyThree][0] < 30) ):
+				elif ( (ScreensCore.ScreenToDisplay == ScreensCore.OptionsScreen) && (InputCore.JoyButtonOne[InputCore.InputJoyThree] == InputCore.Pressed && ScreensCore.JoystickSetupIndex == ScreensCore.JoySetupNotStarted) ):#InputCore.JoyButtonOnePressedCounter[InputCore.InputJoyThree][0] < 30) ):
 					if buttonToCheck == ButtonSelectedByKeyboard:
 						Buttons.ButtonAnimationTimer[ButtonSelectedByKeyboard] = 2
 						AudioCore.PlayEffect(1, 1)
@@ -457,7 +457,7 @@ func ThisIconWasPressed(iconToCheck):
 				else:
 					Icons.IconAnimationTimer[iconToCheck] = 3
 					return true
-	elif (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
+	else:
 		if InputCore.MouseButtonLeftPressed == true:
 			var sprH = (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[iconToCheck]]/2)
 			var sprW = (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[iconToCheck]]/2)
@@ -471,24 +471,6 @@ func ThisIconWasPressed(iconToCheck):
 				else:
 					Icons.IconAnimationTimer[iconToCheck] = 3
 					return true
-	elif (ScreensCore.OperatingSys == ScreensCore.OSAndroid):
-		if (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
-			if InputCore.MouseButtonLeftPressed == true:
-				var sprH = (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[iconToCheck]]/2)
-				var sprW = (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[iconToCheck]]/2)
-
-				if (InputCore.MouseScreenY > (Icons.IconScreenY[iconToCheck]-sprH) && InputCore.MouseScreenY < (Icons.IconScreenY[iconToCheck]+sprH) && InputCore.MouseScreenX > (Icons.IconScreenX[iconToCheck]-sprW) && InputCore.MouseScreenX < (Icons.IconScreenX[iconToCheck]+sprW)):
-					InputCore.DelayAllUserInput = 20
-					Icons.IconAnimationTimer[iconToCheck] = 3
-		elif (ScreensCore.ScreenToDisplay == ScreensCore.PlayingGameScreen):
-			var sprH = (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[iconToCheck]]/2)
-			var sprW = (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[iconToCheck]]/2)
-
-			for index in range(0, 5):
-				if (InputCore.AndroidTouchOnePressed[index] == true):
-					if (InputCore.AndroidTouchOnePressedY[index] > (Icons.IconScreenY[iconToCheck]-sprH) && InputCore.AndroidTouchOnePressedY[index] < (Icons.IconScreenY[iconToCheck]+sprH) && InputCore.AndroidTouchOnePressedX[index] > (Icons.IconScreenX[iconToCheck]-sprW) && InputCore.AndroidTouchOnePressedX[index] < (Icons.IconScreenX[iconToCheck]+sprW)):
-						Icons.IconAnimationTimer[iconToCheck] = 3
-						return true
 
 	return false
 #----------------------------------------------------------------------------------------

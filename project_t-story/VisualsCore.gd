@@ -101,10 +101,8 @@ var AboutTextsEndIndex
 var PieceSpriteCurrentIndex = []
 var PlayfieldSpriteCurrentIndex = []
 
-var KeyboardControlsAlphaTimer;
-
 var KeepAspectRatio = 1
-var FullScreenMode = false
+var FullScreenMode = 0
 
 #----------------------------------------------------------------------------------------
 func _ready():
@@ -143,9 +141,6 @@ func _ready():
 
 	Sprites.SpriteImage[5] = load("res://media/images/logos/GodotLogo.png")
 	Sprites.SpriteActive[5] = true
-
-	Sprites.SpriteImage[7] = load("res://media/images/logos/BetaMaxHeroes_Logo.png")
-	Sprites.SpriteActive[7] = true
 
 	Sprites.SpriteImage[10] = load("res://media/images/backgrounds/BG_Title.png")
 	Sprites.SpriteActive[10] = true
@@ -231,9 +226,6 @@ func _ready():
 	Sprites.SpriteImage[135] = load("res://media/images/playing/PauseBG.png")
 	Sprites.SpriteActive[135] = true
 
-	Sprites.SpriteImage[136] = load("res://media/images/playing/Pause2BG.png")
-	Sprites.SpriteActive[136] = true
-
 	Sprites.SpriteImage[137] = load("res://media/images/playing/JoinIn.png")
 	Sprites.SpriteActive[137] = true
 	Sprites.SpriteImage[138] = load("res://media/images/playing/JoinIn.png")
@@ -302,6 +294,25 @@ func _ready():
 	Sprites.SpriteImage[173] = load("res://media/images/story/Her.png")
 	Sprites.SpriteActive[173] = true
 
+	Sprites.SpriteImage[180] = load("res://media/images/story/BGs-Old/BG_Story-1.png")
+	Sprites.SpriteActive[180] = true
+	Sprites.SpriteImage[181] = load("res://media/images/story/BGs-Old/BG_Story-2.png")
+	Sprites.SpriteActive[181] = true
+	Sprites.SpriteImage[182] = load("res://media/images/story/BGs-Old/BG_Story-3.png")
+	Sprites.SpriteActive[182] = true
+	Sprites.SpriteImage[183] = load("res://media/images/story/BGs-Old/BG_Story-4.png")
+	Sprites.SpriteActive[183] = true
+	Sprites.SpriteImage[184] = load("res://media/images/story/BGs-Old/BG_Story-5.png")
+	Sprites.SpriteActive[184] = true
+	Sprites.SpriteImage[185] = load("res://media/images/story/BGs-Old/BG_Story-6.png")
+	Sprites.SpriteActive[185] = true
+	Sprites.SpriteImage[186] = load("res://media/images/story/BGs-Old/BG_Story-7.png")
+	Sprites.SpriteActive[186] = true
+	Sprites.SpriteImage[187] = load("res://media/images/story/BGs-Old/BG_Story-8.png")
+	Sprites.SpriteActive[187] = true
+	Sprites.SpriteImage[188] = load("res://media/images/story/BGs-Old/BG_Story-9.png")
+	Sprites.SpriteActive[188] = true
+
 	for index in range(0, 100):
 		Sprites.SpriteImage[200+index] = load("res://media/images/gui/NameInputButton2.png")
 		Sprites.SpriteActive[200+index] = true
@@ -339,7 +350,7 @@ func _ready():
 		Sprites.SpriteImage[index] = load("res://media/images/playing/BoxWhite1.png")
 		Sprites.SpriteActive[index] = true
 
-	var _warnErase = PlayfieldSpriteCurrentIndex.resize(9)
+	PlayfieldSpriteCurrentIndex.resize(9)
 	for index in range (0, 8):
 		PlayfieldSpriteCurrentIndex[index] = 0
 
@@ -376,12 +387,9 @@ func _ready():
 		Sprites.SpriteImage[index] = load("res://media/images/playing/BoxWhite1.png")
 		Sprites.SpriteActive[index] = true
 
-	_warnErase = PieceSpriteCurrentIndex.resize(9)
+	PieceSpriteCurrentIndex.resize(9)
 	for index in range (0, 9):
 		PieceSpriteCurrentIndex[index] = 0
-
-	Sprites.SpriteImage[19980] = load("res://media/images/playing/KeyboardControls.png")
-	Sprites.SpriteActive[19980] = true
 
 	Sprites.SpriteImage[19999] = load("res://media/images/backgrounds/FadingBlackBG.png")
 	Sprites.SpriteActive[19999] = true
@@ -396,45 +404,53 @@ func _ready():
 			RenderingServer.canvas_item_set_transform(Sprites.ci_rid[index], xform)
 
 			if (index == 0):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 500)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 500)
 			elif (index == 2):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -25)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -25)
 			elif (index == 10):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -25)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -25)
+			elif (index == 60):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 6)
 			elif (index == 130):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -100)
-			elif (index > 39 && index < 49):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -10)
-			elif (index > 49 && index < 129):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -3)
-			elif (index > 139 && index < 150):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -5)
-			elif (index == 170):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -20)
-			elif (index == 171):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -15)
-			elif (index == 172):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -10)
-			elif (index == 173):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -5)
-			elif (index > 9999 && index < 19980):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -2)
-			elif (index == 130):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -5)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -5)
 			elif (index == 131):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], -99999)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -50)
+			elif (index > 39 && index < 49):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -10)
+			elif (index > 49 && index < 129):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -3)
+			elif (index > 139 && index < 150):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -5)
+			elif (index == 170):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -20)
+			elif (index == 171):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -15)
+			elif (index == 172):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -10)
+			elif (index == 173):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -5)
+			elif (index > 179 && index < 189):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 3)
+			elif (index > 9999 && index < 19980):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -2)
+			elif (index == 130):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -5)
+			elif (index == 131):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], -99999)
 			elif (index == 132):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 1)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 1)
 			elif (index == 134):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 1)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 1)
 			elif (index == 135):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 250)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 250)
 			elif (index == 136):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 250)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 250)
 			elif (index == 19980):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 100)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 100)
+			elif (index == 19999):
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 5)
 			elif (index == 20000):
-				RenderingServer.canvas_item_set_draw_index(Sprites.ci_rid[index], 600)
+				RenderingServer.canvas_item_set_z_index(Sprites.ci_rid[index], 600)
 
 	FontTTF.append(-1)
 	FontTTF[0] = load("res://media/fonts/Font_01.ttf")
@@ -479,8 +495,6 @@ func _ready():
 	FramesPerSecondText.TextImage[0].scale = Vector2(1.0, 1.0)
 	FramesPerSecondText.TextImage[0].rotation = 0.0
 
-	FullScreenMode = false
-
 	pass
 
 #----------------------------------------------------------------------------------------
@@ -492,10 +506,10 @@ func SetFramesPerSecond(fpsValue):
 
 #----------------------------------------------------------------------------------------
 func SetFullScreenMode():
-	if (FullScreenMode == true):
-		if (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive || ScreensCore.OperatingSys == ScreensCore.OSAndroid):  DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, 0)
+	if (FullScreenMode == 1):
+		if (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive):  DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, 0)
 		else:  DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, 0)
-	elif (FullScreenMode == false):
+	elif (FullScreenMode == 0):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, 0)
 
 	InputCore.DelayAllUserInput = 20
@@ -613,12 +627,15 @@ func DrawText(index, text, x, y, horizontalJustification, fontToUse, fontSize, s
 
 	var textHeight = Texts.TextImage[index].get_theme_font("normal_font").get_string_size(Texts.TextImage[index].text).y
 
-	Texts.TextImage[index].global_position.x = xValue#x
+	Texts.TextImage[index].global_position.x = xValue
 	Texts.TextImage[index].global_position.y = (y - newTextDrawingOffsetY)
 	Texts.TextImage[index].set_size(Vector2(VisualsCore.ScreenWidth, VisualsCore.ScreenHeight), false)
 	Texts.TextImage[index].pivot_offset = Vector2((VisualsCore.ScreenWidth / 2.0), (textHeight / 2.0))
 	Texts.TextImage[index].scale = Vector2(scaleX, scaleY)
 	Texts.TextImage[index].rotation = rotations
+
+	Texts.TextImage[index].z_index = 4
+	if (text == "GAME OVER!"):  Texts.TextImage[index].z_index = 45
 
 	Texts.TextIndex.append(index)
 	Texts.TextScreenX.append(x)
@@ -678,7 +695,7 @@ func LoadAboutScreenTexts():
 
 	AddAboutScreenText("Made With 100% FREE:", 0.0)
 	AddAboutScreenText("''Godot Game Engine''", 1.0)
-	AddAboutScreenText(DataCore.GODOT_VERSION, 1.0)
+	AddAboutScreenText("Version "+ DataCore.GODOT_VERSION, 1.0)
 	AddAboutScreenText("[GodotEngine.org]", 1.0)
 
 	AddAboutScreenText("Linux Flatpak Created & Submitted To Flathub By:", 0.0)
@@ -699,7 +716,7 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("Project Directed By:", 0.0)
 	AddAboutScreenText("''JeZxLee''", 1.0)
 
-	AddAboutScreenText("Godot " +DataCore.GODOT_VERSION+  " 2-D Game Engine Framework:", 0.0)
+	AddAboutScreenText("Godot Engine Version " +DataCore.GODOT_VERSION+  " 2-D Game Engine Framework:", 0.0)
 	AddAboutScreenText("The ''Grand National GNX'' v3 Engine By:", 1.0)
 	AddAboutScreenText("''JeZxLee''", 1.0)
 	AddAboutScreenText("''flairetic''", 1.0)
@@ -723,9 +740,11 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("''Gift Of Sight™'' Puzzle Game A.I. Programmers:", 0.0)
 	AddAboutScreenText("Yiyuan Lee", 1.0)
 	AddAboutScreenText("''JeZxLee''", 1.0)
+	AddAboutScreenText("''junaid_develops'' - Fiverr.com", 1.0)
 	AddAboutScreenText("''flairetic''", 1.0)
 
 	AddAboutScreenText("Support Game Programmers:", 0.0)
+	AddAboutScreenText("''junaid_develops'' - Fiverr.com", 1.0)
 	AddAboutScreenText("''flairetic''", 1.0)
 	AddAboutScreenText("''EvanR''", 1.0)
 	AddAboutScreenText("''Daotheman''", 1.0)
@@ -830,7 +849,7 @@ func LoadAboutScreenTexts():
 	AddAboutScreenText("[www.GoldWave.com]", 1.0)
 	AddAboutScreenText("- Free Linux Alternative: ''Audacity'' -", 1.0)
 
-	AddAboutScreenText("''T-Story 110%'' Logo Created In:", 0.0)
+	AddAboutScreenText("''T-Story 110%™'' Logo Created In:", 0.0)
 	AddAboutScreenText("Genuine Microsoft Office 2021 Plus Publisher", 1.0)
 	AddAboutScreenText("[Office.com]", 1.0)
 
@@ -928,9 +947,12 @@ func LoadAboutScreenTexts():
 		else:
 			screenY+=180
 
-		var fontSize = 23
+		var fontSize = 19
 
-		DrawText(index, AboutTexts.AboutTextsText[index-10], 0, screenY, 1, 1, fontSize, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[index-10], 1.0, 0.0, 0.0, 0.0)
+		if (LogicCore.GameWon == true && LogicCore.GameMode > LogicCore.NormalMode):
+			DrawText(index, AboutTexts.AboutTextsText[index-10], 0, screenY, 1, 1, fontSize, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[index-10], 0.5, 0.0, 0.0, 0.0)
+		else:
+			DrawText(index, AboutTexts.AboutTextsText[index-10], 0, screenY, 1, 1, fontSize, 1.0, 1.0, 0, 1.0, 1.0, AboutTexts.AboutTextsBlue[index-10], 1.0, 0.0, 0.0, 0.0)
 
 	Texts.TextImage[AboutTextsEndIndex-2].global_position.y+=(ScreenHeight/2.0)
 	Texts.TextImage[AboutTextsEndIndex-1].global_position.y+=(ScreenHeight/2.0)
