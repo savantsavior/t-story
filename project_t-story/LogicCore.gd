@@ -24,16 +24,9 @@ const EasyMode				= 0
 const NormalMode			= 1
 const HardMode				= 2
 const VeryHardMode			= 3
-
 var GameMode = NormalMode
 
 var AllowComputerPlayers = 1
-
-var DisableMultiplayer = 0
-
-var PieceOverlap = false
-
-var GameSpeed = 30
 
 var SecretCode = []
 var SecretCodeCombined = 0
@@ -41,8 +34,6 @@ var SecretCodeCombined = 0
 var Level
 
 var PieceData = []
-
-var PlayfieldMoveAI = []
 
 var Piece = [];
 
@@ -207,6 +198,12 @@ var PlayerInputDone = []
 
 var PlayfieldsAlpha = 1.0
 var PlayfieldsAlphaDir = 0
+
+var ThereIsDanger = []
+var DangerVoiceTimer = 0
+
+var GameOverTextIndex = []
+var GameOverDisplayTimer
 
 #----------------------------------------------------------------------------------------
 func InitializePieceData():
@@ -461,24 +458,14 @@ func ApplyDifficulty():
 		if (PlayerInput[0] == InputCore.InputCPU):  numberOfComputerPlayers+=1
 		if (PlayerInput[2] == InputCore.InputCPU):  numberOfComputerPlayers+=1
 
-	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
-		if (GameMode == EasyMode):
-			LevelAdjust[0] = 10 - (numberOfComputerPlayers * 1)
-		elif (GameMode == NormalMode):
-			LevelAdjust[1] = 10 - (numberOfComputerPlayers * 1)
-		elif (GameMode == HardMode):
-			LevelAdjust[2] = 10 - (numberOfComputerPlayers * 1)
-		elif (GameMode == VeryHardMode):
-			LevelAdjust[3] = 10 - (numberOfComputerPlayers * 1)
-	elif (ScreensCore.OperatingSys == ScreensCore.OSAndroid):
-		if (GameMode == EasyMode):
-			LevelAdjust[0] = 4
-		elif (GameMode == NormalMode):
-			LevelAdjust[1] = 6
-		elif (GameMode == HardMode):
-			LevelAdjust[2] = 8
-		elif (GameMode == VeryHardMode):
-			LevelAdjust[3] = 10
+	if (GameMode == EasyMode):
+		LevelAdjust[0] = 10 - (numberOfComputerPlayers * 1)
+	elif (GameMode == NormalMode):
+		LevelAdjust[1] = 10 - (numberOfComputerPlayers * 1)
+	elif (GameMode == HardMode):
+		LevelAdjust[2] = 10 - (numberOfComputerPlayers * 1)
+	elif (GameMode == VeryHardMode):
+		LevelAdjust[3] = 10 - (numberOfComputerPlayers * 1)
 
 	if (SecretCodeCombined == 1000):
 		if (GameMode == EasyMode):
@@ -512,14 +499,6 @@ func ResetAIVariables():
 
 #----------------------------------------------------------------------------------------
 func SetupForNewGame():
-	for index in range(0, 5):
-		InputCore.AndroidTouchOnePressed[index] = false
-		InputCore.AndroidTouchOnePressedX[index] = 9999999
-		InputCore.AndroidTouchOnePressedY[index] = 9999999
-		InputCore.AndroidTouchOnePressed[index] = false
-		InputCore.AndroidTouchOnePressedX[index] = 9999999
-		InputCore.AndroidTouchOnePressedY[index] = 9999999
-
 	ClearNewPlayfieldsWithCollisionDetection()
 
 	PieceLandedResetAI = false
@@ -580,8 +559,6 @@ func SetupForNewGame():
 
 	ScoreChanged = true
 
-	PieceOverlap = false
-
 	Level = 1
 
 	PiecePlayfieldX[0] = 5
@@ -604,8 +581,6 @@ func SetupForNewGame():
 	PlayerStatus[2] = GameOver
 
 	PAUSEgame = false
-
-	VisualsCore.KeyboardControlsAlphaTimer = 1.0
 
 	FlashCompletedLinesTimer = 0
 	FlashCompletedLinesTimerTwo = 0
@@ -632,16 +607,9 @@ func SetupForNewGame():
 		PlayerInput[1] = InputCore.InputCPU
 		PlayerInput[2] = InputCore.InputCPU
 		PlayersCanJoinIn = false
-	elif (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
-		PlayerInput[0] = InputCore.InputNone
-		if (InputCore.HTML5input == InputCore.InputTouchOne):
-			PlayerInput[1] = InputCore.InputTouchOne
-		else:
-			PlayerInput[1] = InputCore.InputKeyboard
-		PlayerInput[2] = InputCore.InputNone
 	else:
 		PlayerInput[0] = InputCore.InputNone
-		PlayerInput[1] = InputCore.InputTouchOne
+		PlayerInput[1] = InputCore.InputKeyboard
 		PlayerInput[2] = InputCore.InputNone
 
 	TotalLines = 0
@@ -747,6 +715,8 @@ func SetupForNewGame():
 
 	ResetAIVariables()
 
+	GameOverDisplayTimer = -1
+
 	pass
 
 #----------------------------------------------------------------------------------------
@@ -834,25 +804,15 @@ func CheckForCompletedLines(player):
 	PiecePlayfieldY[player] = 0
 
 	var boxTotal
-	if (LogicCore.DisableMultiplayer == 0):
-		for y in range(4, 24):
-			boxTotal = 0
-			for p in range(3):
-				for x in range (2, 12):
-					if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
-						boxTotal+=1
-
-			if (boxTotal == 30):
-				numberOfCompletedLines+=1
-	elif (LogicCore.DisableMultiplayer == 1):
-		for y in range(4, 24):
-			boxTotal = 0
+	for y in range(4, 24):
+		boxTotal = 0
+		for p in range(3):
 			for x in range (2, 12):
-				if (PlayfieldNew[1][x][y] > 30 && PlayfieldNew[1][x][y] < 40):
+				if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
 					boxTotal+=1
 
-			if (boxTotal == 10):
-				numberOfCompletedLines+=1
+		if (boxTotal == 30):
+			numberOfCompletedLines+=1
 
 	if (numberOfCompletedLines > 0):
 		if (numberOfCompletedLines == 1):
@@ -882,48 +842,31 @@ func CheckForCompletedLines(player):
 
 #----------------------------------------------------------------------------------------
 func FlashCompletedLines(player):
+	LogicCore.PieceMoved = 1
+	
 	if (FlashCompletedLinesTimer < 10):
 		FlashCompletedLinesTimer+=1
 
 	var boxTotal
-	if (LogicCore.DisableMultiplayer == 0):
-		for y in range (4, 24):
-			boxTotal = 0
-			for p in range(3):
-				for x in range (2, 12):
-					if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
-						boxTotal+=1
-					elif (PlayfieldNew[p][x][y] > 99998):
-						boxTotal+=1
-
-				if (boxTotal == 30):
-					DrawEverything = 1
-
-					for pTwo in range(3):
-						if (FlashCompletedLinesTimer % 2 == 0):
-							for xTwo in range (2, 12):
-								PlayfieldNew[pTwo][xTwo][y]-=99999
-						else:
-							for xThree in range(2, 12):
-								PlayfieldNew[pTwo][xThree][y]+=99999
-	elif (LogicCore.DisableMultiplayer == 1):
-		for y in range (4, 24):
-			boxTotal = 0
+	for y in range (4, 24):
+		boxTotal = 0
+		for p in range(3):
 			for x in range (2, 12):
-				if (PlayfieldNew[1][x][y] > 30 && PlayfieldNew[1][x][y] < 40):
+				if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
 					boxTotal+=1
-				elif (PlayfieldNew[1][x][y] > 99998):
+				elif (PlayfieldNew[p][x][y] > 99998):
 					boxTotal+=1
 
-			if (boxTotal == 10):
+			if (boxTotal == 30):
 				DrawEverything = 1
 
-				if (FlashCompletedLinesTimer % 2 == 0):
-					for xTwo in range (2, 12):
-						PlayfieldNew[1][xTwo][y]-=99999
-				else:
-					for xThree in range(2, 12):
-						PlayfieldNew[1][xThree][y]+=99999
+				for pTwo in range(3):
+					if (FlashCompletedLinesTimer % 2 == 0):
+						for xTwo in range (2, 12):
+							PlayfieldNew[pTwo][xTwo][y]-=99999
+					else:
+						for xThree in range(2, 12):
+							PlayfieldNew[pTwo][xThree][y]+=99999
 
 	if FlashCompletedLinesTimer == 10:
 		PlayerStatus[player] = ClearingCompletedLines
@@ -935,56 +878,36 @@ func FlashCompletedLines(player):
 func ClearCompletedLines(player):
 	var thereWasACompletedLine = false
 
+	LogicCore.PieceMoved = 1
+
 	var boxTotal
-	if (LogicCore.DisableMultiplayer == 0):
-		for y in range (4, 24):
-			boxTotal = 0
+	for y in range (4, 24):
+		boxTotal = 0
 
-			for p in range(3):
-				for x in range (2, 12):
-					if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
-						boxTotal+=1
-
-			if boxTotal == 30:
-				thereWasACompletedLine = true
-
-				DrawEverything = 1
-
-				if ClearCompletedLinesTimer < 40:
-					ClearCompletedLinesTimer+=1
-
-				if ClearCompletedLinesTimer % 10 == 0:
-					for playerIndex in range(3):
-						for yTwo in range(y, 5, -1):
-							for xTwo in range(2, 12):
-								if (PlayfieldNew[playerIndex][xTwo][yTwo-1] < 1000 or PlayfieldNew[playerIndex][xTwo][yTwo-1] > 1009):  PlayfieldNew[playerIndex][xTwo][yTwo] = PlayfieldNew[playerIndex][xTwo][yTwo-1]
-
-					for playerIndex in range(3):
-						for x in range(2, 12):
-							PlayfieldNew[playerIndex][x][4] = 0
-	elif (LogicCore.DisableMultiplayer == 1):
-		for y in range (4, 24):
-			boxTotal = 0
-
+		for p in range(3):
 			for x in range (2, 12):
-				if (PlayfieldNew[1][x][y] > 30 && PlayfieldNew[1][x][y] < 40):
+				if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
 					boxTotal+=1
 
-			if boxTotal == 10:
-				thereWasACompletedLine = true
+		if boxTotal == 30:
+			thereWasACompletedLine = true
 
-				DrawEverything = 1
+			DrawEverything = 1
 
-				if ClearCompletedLinesTimer < 40:
-					ClearCompletedLinesTimer+=1
+			if ClearCompletedLinesTimer < 40:
+				ClearCompletedLinesTimer+=1
 
-				if ClearCompletedLinesTimer % 10 == 0:
+			if ClearCompletedLinesTimer % 10 == 0:
+				for playerIndex in range(3):
 					for yTwo in range(y, 5, -1):
 						for xTwo in range(2, 12):
-							if (PlayfieldNew[1][xTwo][yTwo-1] < 1000 or PlayfieldNew[1][xTwo][yTwo-1] > 1009):  PlayfieldNew[1][xTwo][yTwo] = PlayfieldNew[1][xTwo][yTwo-1]
+							if (PlayfieldNew[playerIndex][xTwo][yTwo-1] < 1000 or PlayfieldNew[playerIndex][xTwo][yTwo-1] > 1009):  PlayfieldNew[playerIndex][xTwo][yTwo] = PlayfieldNew[playerIndex][xTwo][yTwo-1]
 
+				for playerIndex in range(3):
 					for x in range(2, 12):
-						PlayfieldNew[1][x][4] = 0
+						PlayfieldNew[playerIndex][x][4] = 0
+
+				AudioCore.PlayEffect(player, 5)
 
 	if thereWasACompletedLine == false:
 		DrawEverything = 1
@@ -1057,7 +980,7 @@ func MovePieceLeft(player):
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
 			PiecePlayfieldX[player]+=1
-	elif (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
+	else:
 		if PieceMovementDelay[player] > -8:
 			PieceMovementDelay[player]-=1
 
@@ -1065,12 +988,6 @@ func MovePieceLeft(player):
 			PiecePlayfieldX[player]-=1
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
-			PiecePlayfieldX[player]+=1
-	elif (PlayerInput[player] != InputCore.InputCPU):
-		if (AndroidMovePieceLeftDelay[player] == 1 || AndroidMovePieceLeftDelay[player] == 1+7 || AndroidMovePieceLeftDelay[player] == 8+6 || AndroidMovePieceLeftDelay[player] == 14+5 || AndroidMovePieceLeftDelay[player] > 19+4):
-			PiecePlayfieldX[player]-=1
-
-		if (PieceCollision(player) == CollisionWithPlayfield || PieceCollision(player) == CollisionWithPiece):
 			PiecePlayfieldX[player]+=1
 
 	pass
@@ -1086,7 +1003,7 @@ func MovePieceRight(player):
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
 			PiecePlayfieldX[player]-=1
-	elif (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
+	else:
 		if PieceMovementDelay[player] < 8:
 			PieceMovementDelay[player]+=1
 
@@ -1094,12 +1011,6 @@ func MovePieceRight(player):
 			PiecePlayfieldX[player]+=1
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
-			PiecePlayfieldX[player]-=1
-	elif (PlayerInput[player] != InputCore.InputCPU):
-		if (AndroidMovePieceRightDelay[player] == 1 || AndroidMovePieceRightDelay[player] == 1+7 || AndroidMovePieceRightDelay[player] == 8+6 || AndroidMovePieceRightDelay[player] == 14+5 || AndroidMovePieceRightDelay[player] > 19+4):
-			PiecePlayfieldX[player]+=1
-
-		if (PieceCollision(player) == CollisionWithPlayfield || PieceCollision(player) == CollisionWithPiece):
 			PiecePlayfieldX[player]-=1
 
 	pass
@@ -1225,14 +1136,6 @@ func SetupNewPiece(player):
 func SetupForNewLevel():
 	if (Level == 1 or SecretCodeCombined == 6161):  return
 
-	for index in range(0, 5):
-		InputCore.AndroidTouchOnePressed[index] = false
-		InputCore.AndroidTouchOnePressedX[index] = 9999999
-		InputCore.AndroidTouchOnePressedY[index] = 9999999
-		InputCore.AndroidTouchOnePressed[index] = false
-		InputCore.AndroidTouchOnePressedX[index] = 9999999
-		InputCore.AndroidTouchOnePressedY[index] = 9999999
-
 	ClearNewPlayfieldsWithCollisionDetection()
 
 	PieceLandedResetAI = false
@@ -1309,8 +1212,6 @@ func SetupForNewLevel():
 		VisualsCore.PieceSpriteCurrentIndex[index] = 0
 
 	PAUSEgame = false
-
-	VisualsCore.KeyboardControlsAlphaTimer = 0.0
 
 	FlashCompletedLinesTimer = 0
 	FlashCompletedLinesTimerTwo = 0
@@ -1544,8 +1445,6 @@ func AddRandomBlocksToBottom():
 
 #----------------------------------------------------------------------------------------
 func CheckForNewPlayers():
-	if (DisableMultiplayer == 1):  return
-
 	var numberOfCurrentPlayers = 1
 	if (AllowComputerPlayers == 0):
 		if (PlayerStatus[0] != GameOver):  numberOfCurrentPlayers+=1
@@ -1635,8 +1534,6 @@ func ProcessPieceFall(player):
 func CheckForChangePlayfield(player):
 	if (AllowComputerPlayers > 0):  return
 
-	if (LogicCore.DisableMultiplayer == 1):  return
-
 	if (PlayersCanJoinIn == false && InputCore.DelayAllUserInput == -1):
 		InputCore.DelayAllUserInput = 15
 		ScoreChanged = true
@@ -1701,113 +1598,62 @@ func CheckForChangePlayfield(player):
 
 #----------------------------------------------------------------------------------------
 func GetHumanPlayersKeyboardAndGameControllersMoves(player):
-	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
-		if (PlayerInputDone[player] == PlayerInput[player]):  return
-		else:  PlayerInputDone[player] = PlayerInput[player]
+	if (PlayerInputDone[player] == PlayerInput[player]):  return
+	else:  PlayerInputDone[player] = PlayerInput[player]
 
-		if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyLeft):
-			MovePieceLeft(player)
-		elif (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyRight):
-			MovePieceRight(player)
-		else:
-			PieceMovementDelay[player] = 0
+	if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyLeft):
+		MovePieceLeft(player)
+	elif (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyRight):
+		MovePieceRight(player)
+	else:
+		PieceMovementDelay[player] = 0
 
-		if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyUp):
-			if (LogicCore.AllowComputerPlayers > 0):
-				if PieceRotatedUp[player] == false:
-					RotatePieceClockwise(player)
-					PieceRotatedUp[player] = true
-			else:
-				CheckForChangePlayfield(player)
-		else:
-			PieceRotatedUp[player] = false
-
-		if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyDown):
-			MovePieceDownDelay[player]+=1
-			MovePieceDown(player)
-			DropBonus[player]+=1
-		else:
-			MovePieceDownDelay[player] = 0
-			DropBonus[player] = 0
-
-		if InputCore.JoyButtonOne[PlayerInput[player]] == InputCore.Pressed:
-			if PieceRotatedOne[player] == false:
-				RotatePieceCounterClockwise(player)
-				PieceRotatedOne[player] = true
-		else:
-			PieceRotatedOne[player] = false
-
-		if InputCore.JoyButtonTwo[PlayerInput[player]] == InputCore.Pressed:
-			if PieceRotatedTwo[player] == false:
+	if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyUp):
+		if (LogicCore.AllowComputerPlayers > 0):
+			if PieceRotatedUp[player] == false:
 				RotatePieceClockwise(player)
-				PieceRotatedTwo[player] = true
+				PieceRotatedUp[player] = true
 		else:
-			PieceRotatedTwo[player] = false
+			CheckForChangePlayfield(player)
+	else:
+		PieceRotatedUp[player] = false
+
+	if (InputCore.JoystickDirection[PlayerInput[player]] == InputCore.JoyDown):
+		MovePieceDownDelay[player]+=1
+		MovePieceDown(player)
+		DropBonus[player]+=1
+	else:
+		MovePieceDownDelay[player] = 0
+		DropBonus[player] = 0
+
+	if InputCore.JoyButtonOne[PlayerInput[player]] == InputCore.Pressed:
+		if PieceRotatedOne[player] == false:
+			RotatePieceCounterClockwise(player)
+			PieceRotatedOne[player] = true
+	else:
+		PieceRotatedOne[player] = false
+
+	if InputCore.JoyButtonTwo[PlayerInput[player]] == InputCore.Pressed:
+		if PieceRotatedTwo[player] == false:
+			RotatePieceClockwise(player)
+			PieceRotatedTwo[player] = true
+	else:
+		PieceRotatedTwo[player] = false
 
 	pass
 
 #----------------------------------------------------------------------------------------
 func GetHumanPlayerMouseMoves(player):
-	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
-		if PieceDropTimer[player] > TimeToDropPiece[player]:
-			if PieceCollisionDown(player) != CollisionWithPiece:
-				MovePieceDown(player)
-				PieceDropTimer[player] = 0
+	if PieceDropTimer[player] > TimeToDropPiece[player]:
+		if PieceCollisionDown(player) != CollisionWithPiece:
+			MovePieceDown(player)
+			PieceDropTimer[player] = 0
 
-		if InterfaceCore.ThisIconWasPressed(2+1) == true:
-			AndroidMovePieceLeftDelay[player]+=1
-			MovePieceLeft(player)
-			AndroidMovePieceRightDelay[player] = 0
-		elif InterfaceCore.ThisIconWasPressed(3+1) == true:
-			AndroidMovePieceRightDelay[player]+=1
-			MovePieceRight(player)
-			AndroidMovePieceLeftDelay[player] = 0
-		else:
-			AndroidMovePieceLeftDelay[player] = 0
-			AndroidMovePieceRightDelay[player] = 0
-			PieceMovementDelay[player] = 0
-
-		if InterfaceCore.ThisIconWasPressed(4+1) == true:
-			if PieceCollisionDown(player) != CollisionWithPiece:
-				AndroidMovePieceDownDelay[player]+=1
-				if (AndroidMovePieceDownDelay[player] == 1 || AndroidMovePieceDownDelay[player] == 6 || AndroidMovePieceDownDelay[player] == 10 || AndroidMovePieceDownDelay[player] == 13 || AndroidMovePieceDownDelay[player] == 15 || AndroidMovePieceDownDelay[player] > 16):
-					PieceDropTimer[player] = 0
-					DropBonus[player]+=1
-					MovePieceDown(player)
-					AndroidMovePieceDownPressed[player] = true
-		else:
-			DropBonus[player] = 0
-			AndroidMovePieceDownDelay[player] = 0
-			AndroidMovePieceDownPressed[player] = false
-
-		if InterfaceCore.ThisIconWasPressed(5+1) == true:
-			if PieceRotatedOne[player] == false:
-				var _warnErase
-				if (MouseTouchRotateDir == 0):
-					RotatePieceClockwise(player)
-				elif (MouseTouchRotateDir == 1):
-					RotatePieceCounterClockwise(player)
-
-				PieceRotatedOne[player] = true
-		else:
-			PieceRotatedOne[player] = false
-
-		if (PlayersCanJoinIn == true):  return
-
-		if InterfaceCore.ThisIconWasPressed(6+1) == true:
-			CheckForChangePlayfield(player)
-
-	pass
-
-#----------------------------------------------------------------------------------------
-func GetHumanPlayerTouchOneMoves(player):
-	var offset = 1
-	if (LogicCore.DisableMultiplayer == 1):  offset = -1+1
-	if InterfaceCore.ThisIconWasPressed(2+offset) == true:
+	if InterfaceCore.ThisIconWasPressed(2+1) == true:
 		AndroidMovePieceLeftDelay[player]+=1
 		MovePieceLeft(player)
 		AndroidMovePieceRightDelay[player] = 0
-	elif InterfaceCore.ThisIconWasPressed(3+offset) == true:
+	elif InterfaceCore.ThisIconWasPressed(3+1) == true:
 		AndroidMovePieceRightDelay[player]+=1
 		MovePieceRight(player)
 		AndroidMovePieceLeftDelay[player] = 0
@@ -1816,7 +1662,7 @@ func GetHumanPlayerTouchOneMoves(player):
 		AndroidMovePieceRightDelay[player] = 0
 		PieceMovementDelay[player] = 0
 
-	if InterfaceCore.ThisIconWasPressed(4+offset) == true:
+	if InterfaceCore.ThisIconWasPressed(4+1) == true:
 		if PieceCollisionDown(player) != CollisionWithPiece:
 			AndroidMovePieceDownDelay[player]+=1
 			if (AndroidMovePieceDownDelay[player] == 1 || AndroidMovePieceDownDelay[player] == 6 || AndroidMovePieceDownDelay[player] == 10 || AndroidMovePieceDownDelay[player] == 13 || AndroidMovePieceDownDelay[player] == 15 || AndroidMovePieceDownDelay[player] > 16):
@@ -1829,59 +1675,22 @@ func GetHumanPlayerTouchOneMoves(player):
 		AndroidMovePieceDownDelay[player] = 0
 		AndroidMovePieceDownPressed[player] = false
 
-	if InterfaceCore.ThisIconWasPressed(5+offset) == true:
+	if InterfaceCore.ThisIconWasPressed(5+1) == true:
 		if PieceRotatedOne[player] == false:
-			RotatePieceClockwise(player)
+			var _warnErase
+			if (MouseTouchRotateDir == 0):
+				RotatePieceClockwise(player)
+			elif (MouseTouchRotateDir == 1):
+				RotatePieceCounterClockwise(player)
+
 			PieceRotatedOne[player] = true
 	else:
 		PieceRotatedOne[player] = false
 
-	if (PlayersCanJoinIn == false):
-		if InterfaceCore.ThisIconWasPressed(6+offset) == true:
-			CheckForChangePlayfield(player)
+	if (PlayersCanJoinIn == true):  return
 
-	pass
-
-#----------------------------------------------------------------------------------------
-func GetHumanPlayerTouchTwoMoves(player):
-	var offset = 7+1
-	
-	if InterfaceCore.ThisIconWasPressed(offset) == true:
-		AndroidMovePieceLeftDelay[player]+=1
-		MovePieceLeft(player)
-		AndroidMovePieceRightDelay[player] = 0
-	elif InterfaceCore.ThisIconWasPressed(offset+1) == true:
-		AndroidMovePieceRightDelay[player]+=1
-		MovePieceRight(player)
-		AndroidMovePieceLeftDelay[player] = 0
-	else:
-		AndroidMovePieceLeftDelay[player] = 0
-		AndroidMovePieceRightDelay[player] = 0
-		PieceMovementDelay[player] = 0
-
-	if InterfaceCore.ThisIconWasPressed(offset+2) == true:
-		if PieceCollisionDown(player) != CollisionWithPiece:
-			AndroidMovePieceDownDelay[player]+=1
-			if (AndroidMovePieceDownDelay[player] == 1 || AndroidMovePieceDownDelay[player] == 6 || AndroidMovePieceDownDelay[player] == 10 || AndroidMovePieceDownDelay[player] == 13 || AndroidMovePieceDownDelay[player] == 15 || AndroidMovePieceDownDelay[player] > 16):
-				PieceDropTimer[player] = 0
-				DropBonus[player]+=1
-				MovePieceDown(player)
-				AndroidMovePieceDownPressed[player] = true
-	else:
-		DropBonus[player] = 0
-		AndroidMovePieceDownDelay[player] = 0
-		AndroidMovePieceDownPressed[player] = false
-
-	if InterfaceCore.ThisIconWasPressed(offset+3) == true:
-		if PieceRotatedOne[player] == false:
-			RotatePieceClockwise(player)
-			PieceRotatedOne[player] = true
-	else:
-		PieceRotatedOne[player] = false
-
-	if (PlayersCanJoinIn == false):
-		if InterfaceCore.ThisIconWasPressed(offset+4) == true:
-			CheckForChangePlayfield(player)
+	if InterfaceCore.ThisIconWasPressed(6+1) == true:
+		CheckForChangePlayfield(player)
 
 	pass
 
@@ -1893,12 +1702,12 @@ func GetHumanPlayerTouchTwoMoves(player):
 #    \______  /__||__|   |__|   \_______  /__|    /_______  /|__\___  /|___|  /__|
 #           \/                          \/                \/   /_____/      \/v100%
 #
-# Cooperative Puzzle Artificial Intelligence A.I. By Yiyuan Lee, "JeZxLee", & "flairetic"
+# Cooperative Puzzle A.I. By Yiyuan Lee, "JeZxLee", "junaid_develops" & "flairetic"
 #
 
 # Below A.I. Source Code Function Written By "JeZxLee"
 func ComputeComputerPlayerMove(player):
-	if (AIsystemToUse == 0):
+	if (AIsystemToUse == 0): # Old A.I. By "JeZxLee"
 		if ( DoAnyPlayersHaveCompletedLine() == true ):
 			CPUComputedBestMove[player] = false
 			ResetAIVariables()
@@ -2035,7 +1844,10 @@ func ComputeComputerPlayerMove(player):
 				else:
 					SkipComputerPlayerMove[player]+=1
 					PieceDropTimer[player] = 0
-	elif (AIsystemToUse == 1):
+
+# URL To New A.I.:   https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
+# Enter Secret Code: "8889" In [Options] To Enable All 3 CPU Players A.I. Test Mode!
+	elif (AIsystemToUse == 1): # New A.I. Fixed By: "junaid_develops" - Fiverr.com
 		if ( DoAnyPlayersHaveCompletedLine() == true ):
 			CPUComputedBestMove[player] = false
 			ResetAIVariables()
@@ -2186,8 +1998,8 @@ func ComputeComputerPlayerMove(player):
 	pass
 #---------------------------------------------------------------------------------------------------
 
-#            Cooperative Puzzle Artificial Intelligence A.I. By Yiyuan Lee, "JeZxLee", & "flairetic"
-
+#                  Cooperative Puzzle A.I. By Yiyuan Lee, "JeZxLee", "junaid_develops" & "flairetic"
+#
 #             /\/\________.__  _____  __    ________   _____    _________.__       .__     __ /\/\TM
 #             )/)/  _____/|__|/ ____\/  |_  \_____  \_/ ____\  /   _____/|__| ____ |  |___/  |)/)/
 #               /   \  ___|  \   __\\   __\  /   |   \   __\   \_____  \ |  |/ ___\|  |  \   __\
@@ -2211,8 +2023,6 @@ func AddIncompleteLineToBottom(player):
 			AddRandomBlocksToBottomTimer+=1
 
 			var timeForCrisis = 375+(100*2)
-			if (ScreensCore.OperatingSys == ScreensCore.OSAndroid):
-				timeForCrisis+=175
 
 			if (AddRandomBlocksToBottomTimer > timeForCrisis):
 				AddRandomBlocksToBottom()
@@ -2256,37 +2066,50 @@ func CheckForLevelAdvance():
 
 #----------------------------------------------------------------------------------------
 func CheckForGameOver():
-	if (LogicCore.DisableMultiplayer == 0):
-		if (  (LogicCore.SecretCodeCombined != 2771) && ( (PlayerInput[0] != InputCore.InputNone and PlayerStatus[0] == GameOver) or (PlayerInput[1] != InputCore.InputNone and PlayerStatus[1] == GameOver) or (PlayerInput[2] != InputCore.InputNone and PlayerStatus[2] == GameOver) )  ):
+	if (LogicCore.AllowComputerPlayers == 0):
+		if ( PlayersCanJoinIn == false && GameOverDisplayTimer == -1 && (PlayerStatus[0] == GameOver || PlayerStatus[1] == GameOver || PlayerStatus[2] == GameOver) ):
+			PlayerStatus[0] = GameOver
+			PlayerStatus[1] = GameOver
+			PlayerStatus[2] = GameOver
+
 			VisualsCore.SetFramesPerSecond(30)
 
-			AudioCore.PlayEffect(1, 8)
 			AudioCore.PlayMusic(0, true)
 
 			StillPlaying = false
 
 			InputCore.DelayAllUserInput = 50
 
-			ScreensCore.ScreenFadeStatus = ScreensCore.FadingToBlack
-	elif (LogicCore.DisableMultiplayer == 1):
-		if (PlayerStatus[1] == GameOver):
+			GameOverDisplayTimer = 200
+
+			DrawEverything = 2
+	elif (LogicCore.AllowComputerPlayers == 1):
+		if ( PlayersCanJoinIn == false && GameOverDisplayTimer == -1 && (PlayerStatus[0] == GameOver || PlayerStatus[1] == GameOver || PlayerStatus[2] == GameOver) ):
+			PlayerStatus[0] = GameOver
+			PlayerStatus[1] = GameOver
+			PlayerStatus[2] = GameOver
+
 			VisualsCore.SetFramesPerSecond(30)
 
-			AudioCore.PlayEffect(1, 8)
 			AudioCore.PlayMusic(0, true)
 
 			StillPlaying = false
 
 			InputCore.DelayAllUserInput = 50
 
-			ScreensCore.ScreenFadeStatus = ScreensCore.FadingToBlack
+			if (SecretCodeCombined != 8889):  GameOverDisplayTimer = 200
+			else:
+				GameOverDisplayTimer = 2
+				AudioCore.PlayEffect(1, 8)
+			
+			DrawEverything = 2
 
 	pass
 
 #----------------------------------------------------------------------------------------
 func AddToPlayfieldAllPlayerPiecesAndDropShadows():
 	for player in range(0, 3):
-		if (PlayerStatus[player] == PieceFalling or PlayerStatus[player] == NewPieceDropping):
+		if (PlayerStatus[player] == PieceFalling or PlayerStatus[player] == NewPieceDropping or PlayerStatus[player] == GameOver):
 			AddCurrentPieceToPlayfieldMemory(player, DropShadow)
 			AddCurrentPieceToPlayfieldMemory(player, Temp)
 
@@ -2295,7 +2118,7 @@ func AddToPlayfieldAllPlayerPiecesAndDropShadows():
 #----------------------------------------------------------------------------------------
 func DeleteFromPlayfieldAllPlayerPiecesAndDropShadows():
 	for player in range(0, 3):
-		if (PlayerStatus[player] == PieceFalling or PlayerStatus[player] == NewPieceDropping):
+		if (PlayerStatus[player] == PieceFalling or PlayerStatus[player] == NewPieceDropping or PlayerStatus[player] == GameOver):
 			AddCurrentPieceToPlayfieldMemory(player, Temp)
 			DeleteCurrentPieceFromPlayfieldMemory(player, DropShadow)
 			DeleteCurrentPieceFromPlayfieldMemory(player, Temp)
@@ -2315,12 +2138,33 @@ func DoAnyPlayersHaveCompletedLine():
 	return(returnValue)
 
 #----------------------------------------------------------------------------------------
+func CheckAllPlayersForDanger():
+	for p in range(3):
+		ThereIsDanger[p] = false
+
+		for y in range(5, 7):
+			for x in range(2, 12):
+				if (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40):
+					if (PlayerStatus[p] != GameOver):  ThereIsDanger[p] = true
+
+	pass
+
+#----------------------------------------------------------------------------------------
 func RunPuzzleGameCore():
 	if PAUSEgame == false:
 		if (PlayersCanJoinIn == true):  CheckForNewPlayers()
 		elif (PlayersCanJoinIn == false):  CheckForLevelAdvance()
 
 		CheckForGameOver()
+
+		CheckAllPlayersForDanger()
+		DangerVoiceTimer+=1
+
+		for player in range(0, 3):
+			if (ThereIsDanger[player] == true && PlayerStatus[player] != GameOver):
+				if (DangerVoiceTimer > 135):
+					AudioCore.PlayEffect(2, 10)
+					DangerVoiceTimer = 0
 
 		if (LogicCore.SecretCodeCombined == 2778 || LogicCore.SecretCodeCombined == 2779 || LogicCore.SecretCodeCombined == 1234 || LogicCore.SecretCodeCombined == 2771):
 			PlayerStatus[0] = GameOver
@@ -2350,10 +2194,6 @@ func RunPuzzleGameCore():
 						GetHumanPlayersKeyboardAndGameControllersMoves(player)
 					elif (PlayerInput[player] == InputCore.InputMouse):
 						GetHumanPlayerMouseMoves(player)
-					elif (PlayerInput[player] == InputCore.InputTouchOne):
-						GetHumanPlayerTouchOneMoves(player)
-					elif (PlayerInput[player] == InputCore.InputTouchTwo):
-						GetHumanPlayerTouchTwoMoves(player)
 					elif (PlayerInput[player] == InputCore.InputCPU && AllowComputerPlayers > 0):
 						ComputeComputerPlayerMove(player)
 
@@ -2390,13 +2230,6 @@ func _ready():
 			PlayfieldNew[player][x].resize(26)
 			for y in range(26):
 				PlayfieldNew[player][x][y] = []
-
-	PlayfieldMoveAI.resize(35)
-	for x in range(35):
-		PlayfieldMoveAI[x] = []
-		PlayfieldMoveAI[x].resize(26)
-		for y in range(26):
-			PlayfieldMoveAI[x][y] = []
 
 	PieceBagIndex.resize(3)
 
@@ -2602,6 +2435,11 @@ func _ready():
 
 	PlayerPlayfield.resize(3)
 	PlayerInputDone.resize(3)
+
+	GameOverTextIndex.resize(3)
+
+	ThereIsDanger.resize(3)
+	GameOverDisplayTimer = -1
 
 	pass
 

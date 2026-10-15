@@ -41,12 +41,7 @@ var JoyButtonTwo = []
 var JoyButtonOneWasPressed = []
 var JoyButtonTwoWasPressed = []
 
-var JoyButtonOnePressedDuration = []
-var JoyButtonOnePressedCounter = []
-
-var ThereAreGamepads = false
 var NumberOfGamepads = 0
-var _GamepadsConnected = []
 var FoundGamepadOne = false
 var FoundGamepadTwo = false
 var FoundGamepadThree = false
@@ -60,10 +55,8 @@ var JoyRightMapped = []
 var JoyButtonOneMapped = []
 var JoyButtonTwoMapped = []
 
-var OptionsInJoySetup
-
-var connected_joypads
-var num_controllers
+var	KeyRotateOneMapped = "z"
+var KeyRotateTwoMapped = "x"
 
 var MouseButtonLeftPressed
 var MouseButtonRightPressed
@@ -71,7 +64,7 @@ var MouseButtonRightPressed
 var MouseScreenX
 var MouseScreenY
 
-var OldMusicVolume
+var PauseOldMusicVolume
 
 const InputNone			= -1
 const InputKeyboard		= 0
@@ -86,24 +79,7 @@ const InputAny			= 8
 
 var InputNames = []
 
-var TouchTwoScreenX
-var TouchTwoScreenY
-
-var TouchTwoPressed
-
 var InputThatStartedNewGame
-
-var HTML5input = InputKeyboard
-
-var AndroidScreenData = []
-
-var AndroidTouchOnePressed = []
-var AndroidTouchOnePressedX = []
-var AndroidTouchOnePressedY = []
-
-var AndroidTouchTwoPressed = []
-var AndroidTouchTwoPressedX = []
-var AndroidTouchTwoPressedY = []
 
 var GamePadOneNameText
 var GamePadTwoNameText
@@ -126,48 +102,12 @@ func _ready():
 	JoyButtonTwo.resize(9)
 	JoyButtonTwoWasPressed.resize(9)
 
-	JoyButtonOnePressedDuration.resize(10)
-	for x in range(0, 10):
-		JoyButtonOnePressedDuration[x] = []
-		JoyButtonOnePressedDuration[x].resize(10)
-		for y in range(0, 10):
-			JoyButtonOnePressedDuration[x][y] = []
-
-	for x in range(0, 10):
-		for y in range(0, 10):
-			JoyButtonOnePressedDuration[x][y] = 0
-
-	JoyButtonOnePressedCounter.resize(10)
-	for x in range(0, 10):
-		JoyButtonOnePressedCounter[x] = []
-		JoyButtonOnePressedCounter[x].resize(10)
-		for y in range(0, 10):
-			JoyButtonOnePressedCounter[x][y] = []
-
-	for x in range(0, 10):
-		for y in range(0, 10):
-			JoyButtonOnePressedCounter[x][y] = 0
-
 	for index in range(0, 9):
 		JoystickDirection[index] = JoyCentered
 		JoyButtonOne[index] = NotPressed
 		JoyButtonOneWasPressed[index] = 0
 		JoyButtonTwo[index] = NotPressed
 		JoyButtonTwoWasPressed[index] = 0
-
-	ThereAreGamepads = false
-
-	connected_joypads = Input.get_connected_joypads()
-	num_controllers = connected_joypads.size()
-
-	var connected_pads = Input.get_connected_joypads()
-	if connected_pads.size() > 0:
-		ThereAreGamepads = true
-	else:
-		ThereAreGamepads = false
-
-	if (Input.get_connected_joypads().size() > 0):  _GamepadsConnected = true
-	else:  _GamepadsConnected = false
 
 	JoyUpMapped.resize(9)
 	for x in range(9):
@@ -219,15 +159,9 @@ func _ready():
 		JoyButtonOneMapped[index][0] = 0+10
 		JoyButtonTwoMapped[index][0] = 1+10
 
-	OptionsInJoySetup = false
-
 	MouseButtonLeftPressed = false
 	MouseButtonRightPressed = false
 	
-	TouchTwoPressed = false
-
-	HTML5input = InputKeyboard
-
 	InputNames.resize(8)
 	InputNames[0] = "Keyboard"
 	InputNames[1] = "Mouse"
@@ -237,18 +171,6 @@ func _ready():
 	InputNames[5] = "Controller 2"
 	InputNames[6] = "Controller 3"
 	InputNames[7] = "A.I."
-
-	AndroidScreenData.resize(2)
-	AndroidScreenData[0] = -1
-	AndroidScreenData[1] = -1
-
-	AndroidTouchOnePressed.resize(5)
-	AndroidTouchOnePressedX.resize(5)
-	AndroidTouchOnePressedY.resize(5)
-
-	AndroidTouchTwoPressed.resize(5)
-	AndroidTouchTwoPressedX.resize(5)
-	AndroidTouchTwoPressedY.resize(5)
 
 	GameControllerNames.resize(3)
 	GameControllerNames[0] = "N.A."
@@ -270,7 +192,7 @@ func GetJoystickInputForMapping(index, _buttons):
 
 #----------------------------------------------------------------------------------------
 func _process(_delta):
-	for index in range(0, 9):
+	for index in range(1, 9):
 		JoystickDirection[index] = JoyCentered
 		JoyButtonOne[index] = NotPressed
 		JoyButtonTwo[index] = NotPressed
@@ -279,21 +201,21 @@ func _process(_delta):
 		DelayAllUserInput-=1
 		return
 
-	if Input.is_action_pressed("KeyboardUp"):
-		JoystickDirection[InputKeyboard] = JoyUp
-	elif Input.is_action_pressed("KeyboardRight"):
-		JoystickDirection[InputKeyboard] = JoyRight
-	elif Input.is_action_pressed("KeyboardDown"):
-		JoystickDirection[InputKeyboard] = JoyDown
-	elif Input.is_action_pressed("KeyboardLeft"):
-		JoystickDirection[InputKeyboard] = JoyLeft
+	#if Input.is_action_pressed("KeyboardUp"):
+		#JoystickDirection[InputKeyboard] = JoyUp
+	#elif Input.is_action_pressed("KeyboardRight"):
+		#JoystickDirection[InputKeyboard] = JoyRight
+	#elif Input.is_action_pressed("KeyboardDown"):
+		#JoystickDirection[InputKeyboard] = JoyDown
+	#elif Input.is_action_pressed("KeyboardLeft"):
+		#JoystickDirection[InputKeyboard] = JoyLeft
 
-	if (Input.is_action_pressed("ButtonOne")):
-		if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonOne[InputKeyboard] = Pressed
-		InputThatStartedNewGame = InputKeyboard
-
-	if (Input.is_action_pressed("ButtonTwo")):
-		if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonTwo[InputKeyboard] = Pressed
+	#if (Input.is_action_pressed("ButtonOne")):
+		#if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonOne[InputKeyboard] = Pressed
+		#InputThatStartedNewGame = InputKeyboard
+#
+	#if (Input.is_action_pressed("ButtonTwo")):
+		#if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonTwo[InputKeyboard] = Pressed
 
 	for index in range (0, 3):
 		if ( (FoundGamepadOne == true && index == 0) || (FoundGamepadTwo == true && index == 1)  || (FoundGamepadThree == true && index == 2) ):
@@ -367,20 +289,20 @@ func _process(_delta):
 	else:
 		ShiftPressedOnKeyboard = false
 
-	if Input.is_action_pressed("Pause"):
+	if ( Input.is_action_pressed("Pause") && LogicCore.GameOverDisplayTimer == -1 ):
 		if (DelayAllUserInput < 1 && ScreensCore.ScreenToDisplay == ScreensCore.PlayingGameScreen):
 			if (LogicCore.PAUSEgame == false):
 				LogicCore.PAUSEgame = true
 				LogicCore.PauseWasJustPressed = true
 
-				OldMusicVolume = AudioCore.MusicVolume
-				AudioCore.MusicPlayer.set_volume_db(AudioCore.ConvertLinearToDB(0.0))
+				PauseOldMusicVolume = AudioCore.MusicVolume
+				AudioCore.MusicPlayer.set_volume_db(linear_to_db(0.0))
 			elif (LogicCore.PAUSEgame == true):
 				LogicCore.PAUSEgame = false
 				LogicCore.PauseWasJustPressed = true
 
-				AudioCore.MusicVolume = OldMusicVolume
-				if (AudioCore.MusicVolume > 0.0):  AudioCore.MusicPlayer.set_volume_db(AudioCore.ConvertLinearToDB(AudioCore.MusicVolume))
+				AudioCore.MusicVolume = PauseOldMusicVolume
+				if (AudioCore.MusicVolume > 0.0):  AudioCore.MusicPlayer.set_volume_db(linear_to_db(AudioCore.MusicVolume))
 
 			AudioCore.PlayEffect(1, 1)
 			DelayAllUserInput = 50
@@ -399,116 +321,84 @@ func _input(event):
 
 	KeyTypedOnKeyboard = "`"
 
-	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid):
-		if (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
-			MouseButtonLeftPressed = false
+	JoystickDirection[0] = JoyCentered
+	JoyButtonOne[0] = NotPressed
+	JoyButtonTwo[0] = NotPressed
 
-		TouchTwoPressed = false
-	elif (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
+	if Input.is_action_pressed("KeyboardUp"):
+		JoystickDirection[InputKeyboard] = JoyUp
+	elif Input.is_action_pressed("KeyboardRight"):
+		JoystickDirection[InputKeyboard] = JoyRight
+	elif Input.is_action_pressed("KeyboardDown"):
+		JoystickDirection[InputKeyboard] = JoyDown
+	elif Input.is_action_pressed("KeyboardLeft"):
+		JoystickDirection[InputKeyboard] = JoyLeft
+
+	if (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
 		MouseButtonLeftPressed = false
-		TouchTwoPressed = false
 
 	if ScreensCore.ScreenFadeStatus != ScreensCore.FadingIdle:  return
 
-	if (ScreensCore.OperatingSys != ScreensCore.OSAndroid || ScreensCore.VideoAndroid == true):
-		if event is InputEventKey:
-			if event.keycode == KEY_ESCAPE and event.pressed:
-				if ( (ScreensCore.ScreenToDisplay == ScreensCore.AboutScreen and LogicCore.GameWon == true) or (ScreensCore.ScreenToDisplay == ScreensCore.WonGameScreen) ):
-					AudioCore.PlayEffect(1, 1)
-				else:
-					ScreensCore.ScreenToDisplayNext = ScreensCore.TitleScreen
-					ScreensCore.ScreenFadeStatus = ScreensCore.FadingToBlack
-					AudioCore.PlayEffect(1, 1)
-					AudioCore.PlayMusic(0, true)
-			elif event.keycode == KEY_SPACE and event.pressed:
-				KeyboardSpacebarPressed = true
-				KeyTypedOnKeyboard = "_"
-			elif event.keycode == KEY_ENTER and event.pressed:
-				KeyboardEnterPressed = true
-			elif event.keycode == KEY_BACKSPACE and event.pressed:
-				KeyboardBackspacePressed = true
-
-			if (event.pressed && event.keycode != KEY_SHIFT):
-				if (event.unicode > 32 && event.unicode < 137):
-					KeyTypedOnKeyboard = char(event.unicode)
-
-		if event is InputEventMouseMotion:
-			MouseScreenX = event.position.x
-			MouseScreenY = event.position.y
-
-		if (ScreensCore.OperatingSys != ScreensCore.OSHTMLFive):
-			if event is InputEventMouseButton:
-				if event.button_index == MOUSE_BUTTON_LEFT:
-					if (event.is_pressed() == true):
-						MouseButtonLeftPressed = true
-						MouseScreenX = event.position.x
-						MouseScreenY = event.position.y
-
-						InputThatStartedNewGame = InputKeyboard
-					else:
-						MouseButtonLeftPressed = false
-			if (event is InputEventMouseButton):
-				if event.button_index == MOUSE_BUTTON_RIGHT:
-					if (event.is_pressed() == true):
-						MouseButtonRightPressed = true
-						TouchTwoPressed = true
-
-		elif (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive):
-			if (event is InputEventMouseButton):
-				if event.button_index == MOUSE_BUTTON_LEFT:
-					if (event.is_pressed() == true):
-						MouseButtonLeftPressed = true
-						TouchTwoPressed = true
-						MouseScreenX = event.position.x
-						MouseScreenY = event.position.y
-
-						if (HTML5input == InputKeyboard):
-							InputThatStartedNewGame = InputKeyboard
-						elif (HTML5input == InputTouchTwo):
-							InputThatStartedNewGame = InputTouchTwo
-			if (event is InputEventMouseButton):
-				if event.button_index == MOUSE_BUTTON_RIGHT:
-					if (event.is_pressed() == true):
-						MouseButtonRightPressed = true
-						TouchTwoPressed = true
-			elif (event is InputEventScreenTouch and event.is_pressed() == true):
-				MouseButtonLeftPressed = true
-				TouchTwoPressed = true
-				MouseScreenX = event.position.x
-				MouseScreenY = event.position.y
-			elif (event is InputEventScreenDrag):
-				MouseButtonLeftPressed = true
-				TouchTwoPressed = true
-				MouseScreenX = event.position.x
-				MouseScreenY = event.position.y
+	if event is InputEventKey:
+		if event.keycode == KEY_ESCAPE and event.pressed:
+			if ( (ScreensCore.ScreenToDisplay == ScreensCore.AboutScreen and LogicCore.GameWon == true) or (ScreensCore.ScreenToDisplay == ScreensCore.WonGameScreen) ):
+				AudioCore.PlayEffect(1, 1)
 			else:
-				MouseButtonLeftPressed = false
-				TouchTwoPressed = false
+				ScreensCore.ScreenToDisplayNext = ScreensCore.TitleScreen
+				ScreensCore.ScreenFadeStatus = ScreensCore.FadingToBlack
+				AudioCore.PlayEffect(1, 1)
+				AudioCore.PlayMusic(0, true)
+		elif event.keycode == KEY_SPACE and event.pressed:
+			KeyboardSpacebarPressed = true
+			KeyTypedOnKeyboard = "_"
+		elif event.keycode == KEY_ENTER and event.pressed:
+			KeyboardEnterPressed = true
+		elif event.keycode == KEY_BACKSPACE and event.pressed:
+			KeyboardBackspacePressed = true
 
-	if ( ScreensCore.OperatingSys == ScreensCore.OSAndroid ):
-		if (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
-			if (event is InputEventScreenTouch and event.is_pressed() == true and MouseButtonLeftPressed == false):
-				MouseButtonLeftPressed = true
-				MouseScreenX = event.position.x
-				MouseScreenY = event.position.y
-			else:
-				MouseButtonLeftPressed = false
-				MouseScreenX = 999999
-				MouseScreenY = 999999
-		elif (ScreensCore.ScreenToDisplay == ScreensCore.PlayingGameScreen):
-			if (event is InputEventScreenTouch):
+		if (event.pressed && event.keycode != KEY_SHIFT):
+			if (event.unicode > 32 && event.unicode < 137):
+				KeyTypedOnKeyboard = char(event.unicode)
+
+				if ( KeyRotateOneMapped == KeyTypedOnKeyboard && ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen ):
+					JoyButtonOne[InputKeyboard] = Pressed
+					InputThatStartedNewGame = InputKeyboard
+				elif ( KeyRotateTwoMapped == KeyTypedOnKeyboard && ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen ):
+					JoyButtonTwo[InputKeyboard] = Pressed
+
+	if event is InputEventMouseMotion:
+		MouseScreenX = event.position.x
+		MouseScreenY = event.position.y
+
+	if (ScreensCore.OperatingSys != ScreensCore.OSHTMLFive):
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_LEFT:
 				if (event.is_pressed() == true):
-					AndroidTouchOnePressed[event.index] = true
-					AndroidTouchOnePressedX[event.index] = event.position.x
-					AndroidTouchOnePressedY[event.index] = event.position.y
-				elif (event.is_pressed() == false):
-					AndroidTouchOnePressed[event.index] = false
-					AndroidTouchOnePressedX[event.index] = 9999999
-					AndroidTouchOnePressedY[event.index] = 9999999
+					MouseButtonLeftPressed = true
+					MouseScreenX = event.position.x
+					MouseScreenY = event.position.y
 
-			if (event is InputEventScreenDrag):
-				AndroidTouchOnePressed[event.index] = true
-				AndroidTouchOnePressedX[event.index] = event.position.x
-				AndroidTouchOnePressedY[event.index] = event.position.y
+					InputThatStartedNewGame = InputKeyboard
+				else:
+					MouseButtonLeftPressed = false
+		if (event is InputEventMouseButton):
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				if (event.is_pressed() == true):
+					MouseButtonRightPressed = true
+	elif (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive):
+		if (event is InputEventMouseButton):
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				if (event.is_pressed() == true):
+					MouseButtonLeftPressed = true
+					MouseScreenX = event.position.x
+					MouseScreenY = event.position.y
+
+					InputThatStartedNewGame = InputKeyboard
+		if (event is InputEventMouseButton):
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				if (event.is_pressed() == true):
+					MouseButtonRightPressed = true
+		else:
+			MouseButtonLeftPressed = false
 
 	pass

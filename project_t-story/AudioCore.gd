@@ -22,16 +22,11 @@ var MusicVolume
 var EffectsVolume
 
 var MusicPlayer
-var MusicTotal = 13
+var MusicTotal = 12
 var MusicCurrentlyPlaying = -1
 
 var EffectPlayer = []
-var EffectsTotal = 10
-
-#----------------------------------------------------------------------------------------
-func ConvertLinearToDB(volume):
-	var returnValue = log(volume) * 8.6858896380650365530225783783321
-	return(returnValue)
+var EffectsTotal = 11
 
 #----------------------------------------------------------------------------------------
 func _ready():
@@ -61,18 +56,19 @@ func _ready():
 			elif index == 7:  EffectPlayer[plr][index].stream = load("res://media/sound/IncomingLine.wav")
 			elif index == 8:  EffectPlayer[plr][index].stream = load("res://media/sound/GameOver.wav")
 			elif index == 9:  EffectPlayer[plr][index].stream = load("res://media/sound/LogoSay.wav")
+			elif index == 10:  EffectPlayer[plr][index].stream = load("res://media/sound/Danger.wav")
 			add_child(EffectPlayer[plr][index])
-			EffectPlayer[plr][index].set_volume_db(ConvertLinearToDB(EffectsVolume))
+			EffectPlayer[plr][index].set_volume_db(linear_to_db(EffectsVolume))
 		pass
 	pass
 
 #----------------------------------------------------------------------------------------
 func SetMusicAndEffectsVolume(musicVolume, effectsVolume):
-	MusicPlayer.set_volume_db(ConvertLinearToDB(musicVolume))
+	MusicPlayer.set_volume_db(linear_to_db(musicVolume))
 
 	for plr in range(3):
 		for index in range(0, EffectsTotal):
-			EffectPlayer[plr][index].set_volume_db(ConvertLinearToDB(effectsVolume))
+			EffectPlayer[plr][index].set_volume_db(linear_to_db(effectsVolume))
 		pass
 	pass
 
@@ -97,9 +93,8 @@ func PlayMusic(index, loop):
 	elif index == 9:  MusicPlayer.stream = load("res://media/music/InGame9BGM.ogg")
 	elif index == 10: MusicPlayer.stream = load("res://media/music/WonBGM.ogg")
 	elif index == 11: MusicPlayer.stream = load("res://media/music/Ending.ogg")
-	elif index == 12: MusicPlayer.stream = load("res://media/music/Intro.ogg")
 
-	MusicPlayer.set_volume_db(ConvertLinearToDB(MusicVolume))
+	MusicPlayer.set_volume_db(linear_to_db(MusicVolume))
 	MusicPlayer.stream.set_loop(loop)
 	MusicPlayer.play(0.0)
 
@@ -109,7 +104,7 @@ func PlayMusic(index, loop):
 func PlayEffect(plr, index):
 	if index < 0 || index > (EffectsTotal-1):  return
 
-	EffectPlayer[plr][index].set_volume_db(ConvertLinearToDB(EffectsVolume))
+	EffectPlayer[plr][index].set_volume_db(linear_to_db(EffectsVolume))
 	EffectPlayer[plr][index].play(0.0)
 
 	pass

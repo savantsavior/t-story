@@ -25,9 +25,9 @@ var HighScoreScore = []
 var PlayerWithHighestScore
 var NewHighScoreRank
 
-const FILE_NAME = "user://TetriStory-Pre-Retail1a-game-data.json"
+const FILE_NAME = "user://TetriStory-Pre-Retail1aaj-game-data.json"
 var godot_Temp_Version = Engine.get_version_info()
-var GODOT_VERSION = godot_Temp_Version.string
+var GODOT_VERSION = str(godot_Temp_Version.major)+ "."+ str(godot_Temp_Version.minor)+ "."+ str(godot_Temp_Version.patch)+ "+"#godot_Temp_Version.string
 
 #----------------------------------------------------------------------------------------
 func CheckForNewHighScore():
@@ -74,7 +74,7 @@ func ClearHighScores():
 		HighScoreName[mode][6] = "theweirdn8"
 		HighScoreName[mode][7] = "mattmatteh"
 		HighScoreName[mode][8] = "Oshi Bobo"
-		HighScoreName[mode][9] = "Godot Engine ver. 4.7.1+"
+		HighScoreName[mode][9] = "Godot Engine Version "+GODOT_VERSION
 
 		HighScoreLevel[mode][0] = 10
 		HighScoreLevel[mode][1] = 9
@@ -106,23 +106,28 @@ func LoadOptionsAndHighScores():
 	var err = config.load(FILE_NAME)
 
 	if err != OK:
-		if (ScreensCore.OperatingSys == ScreensCore.OSAndroid):
-			LogicCore.AllowComputerPlayers = 0
-			LogicCore.DisableMultiplayer = 1
+		if ( OS.get_name() == "Windows" or OS.get_name() == "Linux" ):
+			VisualsCore.FullScreenMode = 1
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, 0)
+		else:
+			VisualsCore.FullScreenMode = 0
 		return
 
 	AudioCore.MusicVolume = config.get_value("Options", "MusicVolume")
 	AudioCore.EffectsVolume = config.get_value("Options", "EffectsVolume")
 	VisualsCore.FullScreenMode = config.get_value("Options", "FullScreenMode")
+	VisualsCore.KeepAspectRatio = config.get_value("Options", "KeepAspectRatio")
 	LogicCore.GameMode = config.get_value("Options", "GameMode")
 	LogicCore.AllowComputerPlayers = config.get_value("Options", "AllowComputerPlayers")
+	LogicCore.AIsystemToUse = config.get_value("Options", "AIsystemToUse")
 	LogicCore.SecretCode = config.get_value("Options", "SecretCode")
+
 	HighScoreName = config.get_value("HighScores", "HighScoreName")
 	HighScoreLevel = config.get_value("HighScores", "HighScoreLevel")
 	HighScoreScore = config.get_value("HighScores", "HighScoreScore")
-	VisualsCore.KeepAspectRatio = config.get_value("Options", "KeepAspectRatio")
 
-	LogicCore.AIsystemToUse = config.get_value("Options", "AIsystemToUse")
+	InputCore.KeyRotateOneMapped = config.get_value("Options", "KeyRotateOneMapped")
+	InputCore.KeyRotateTwoMapped = config.get_value("Options", "KeyRotateTwoMapped")
 
 	InputCore.JoyUpMapped = config.get_value("Options", "JoyUpMapped")
 	InputCore.JoyDownMapped = config.get_value("Options", "JoyDownMapped")
@@ -142,15 +147,18 @@ func SaveOptionsAndHighScores():
 	config.set_value("Options", "MusicVolume", AudioCore.MusicVolume)
 	config.set_value("Options", "EffectsVolume", AudioCore.EffectsVolume)
 	config.set_value("Options", "FullScreenMode", VisualsCore.FullScreenMode)
+	config.set_value("Options", "KeepAspectRatio", VisualsCore.KeepAspectRatio)
 	config.set_value("Options", "GameMode", LogicCore.GameMode)
 	config.set_value("Options", "AllowComputerPlayers", LogicCore.AllowComputerPlayers)
+	config.set_value("Options", "AIsystemToUse", LogicCore.AIsystemToUse)
 	config.set_value("Options", "SecretCode", LogicCore.SecretCode)
+
 	config.set_value("HighScores", "HighScoreName", HighScoreName)
 	config.set_value("HighScores", "HighScoreLevel", HighScoreLevel)
 	config.set_value("HighScores", "HighScoreScore", HighScoreScore)
-	config.set_value("Options", "KeepAspectRatio", VisualsCore.KeepAspectRatio)
 
-	config.set_value("Options", "AIsystemToUse", LogicCore.AIsystemToUse)
+	config.set_value("Options", "KeyRotateOneMapped", InputCore.KeyRotateOneMapped)
+	config.set_value("Options", "KeyRotateTwoMapped", InputCore.KeyRotateTwoMapped)
 
 	config.set_value("Options", "JoyUpMapped", InputCore.JoyUpMapped)
 	config.set_value("Options", "JoyDownMapped", InputCore.JoyDownMapped)

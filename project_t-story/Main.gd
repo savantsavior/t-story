@@ -29,7 +29,8 @@
 #                                        \/          TM        \/           T U R B O   \/\/
 #                                       "T-Story 110%"
 #                                @>-/---------- ---------\-<@
-#                                  Pre Retail Version 1.1.0
+#                    Pass To Junaid (Fix New A.I.) - Retail Version 1.1.0
+#                            [ LogicCore.gd / Start Line 1848 ]
 #
 #                                  Linux Flatpak On Flathub
 #                       HTML5 Enabled Desktop/Laptop Internet Browsers
@@ -44,16 +45,11 @@ func _ready():
 
 	DataCore.LoadOptionsAndHighScores()
 
-	if (ScreensCore.OperatingSys == ScreensCore.OSAndroid):  VisualsCore.FullScreenMode = true
-	if (ScreensCore.OperatingSys == ScreensCore.OSDesktop):  VisualsCore.FullScreenMode = true
-
 	VisualsCore.SetScreenStretchMode()
 
 	VisualsCore.SetFullScreenMode()
 
 	randomize()
-
-	InputCore.HTML5input = InputCore.InputKeyboard
 
 	pass
 
