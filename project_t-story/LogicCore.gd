@@ -143,6 +143,8 @@ var CPUPieceTestX = []
 var CPURotationTest = []
 var CPUComputedBestMove = []
 
+var AI_PieceBlocks = []
+
 var pTXStep = []
 var bestValue = []
 
@@ -1705,6 +1707,179 @@ func GetHumanPlayerMouseMoves(player):
 # Cooperative Puzzle A.I. By Yiyuan Lee, "JeZxLee", "junaid_develops" & "flairetic"
 #
 
+#----------------------------------------------------------------------------------------
+func AI_InitializePieceBlocks():
+	AI_PieceBlocks.resize(8)
+	for piece in range(8):
+		AI_PieceBlocks[piece] = []
+		AI_PieceBlocks[piece].resize(5)
+		for pieceRotation in range(5):
+			AI_PieceBlocks[piece][pieceRotation] = []
+			var box = 1
+			for y in range(4):
+				for x in range(4):
+					if (piece > 0 && PieceData[piece][pieceRotation][box] > 0):
+						AI_PieceBlocks[piece][pieceRotation].append(Vector2i(x, y))
+					box += 1
+
+	return
+
+#----------------------------------------------------------------------------------------
+func AI_CheckCollision(player, blocks, posX, posY):
+	for block in blocks:
+		var newX = posX + block.x
+		var newY = posY + block.y
+		if (newX < 0 || newX > 14 || newY < 0 || newY > 25):
+			return(true)
+		var cellValue = PlayfieldNew[player][newX][newY]
+		if ( (cellValue > 0 && cellValue < 40) || cellValue == 255 || cellValue > 99999 ):
+			return(true)
+
+	return(false)
+
+#----------------------------------------------------------------------------------------
+func AI_EvaluateGrid(player):
+	var aggregateHeight = 0.0
+	var trappedHoles = 0.0
+	var columnHeight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+	for posX in range(2, 12):
+		var foundTopBlock = false
+		for posY in range(5, 24):
+			var cellValue = PlayfieldNew[player][posX][posY]
+			if (cellValue > 0 && cellValue < 40):
+				if (foundTopBlock == false):
+					foundTopBlock = true
+					var heightTemp = (24 - posY)
+					columnHeight[posX] = heightTemp
+					aggregateHeight += heightTemp
+			elif (foundTopBlock == true && cellValue == 0):
+				trappedHoles += 1.0
+
+	var bumpiness = 0.0
+	for posX in range(2, 11):
+		bumpiness += abs(columnHeight[posX] - columnHeight[posX + 1])
+
+	var completedLines = 0.0
+	for posY in range(5, 24):
+		var boxCount = 0
+		for posX in range(2, 12):
+			var cellValue = PlayfieldNew[player][posX][posY]
+			if (cellValue > 0 && cellValue < 40):
+				boxCount += 1
+		if (boxCount == 10):
+			completedLines += 1.0
+
+	# Heuristic Evaluation Function By Yiyuan Lee
+	var testValue = ( (-0.510066 * aggregateHeight)
+					+ (0.760666 * completedLines)
+					+ (-0.35663 * trappedHoles)
+					+ (-0.184483 * bumpiness) )
+
+	return(testValue)
+
+#----------------------------------------------------------------------------------------
+func AI_FindBestMove(player, pieceOne, pieceTwo):
+	var TEMP_BestScore = -9999999999.0
+	var TEMP_BestX = 5
+	var TEMP_BestRotation = 1
+
+	if (pieceOne < 1 || pieceOne > 7 || pieceTwo < 1 || pieceTwo > 7):
+		return({"X": TEMP_BestX, "Rotation": TEMP_BestRotation, "Score": TEMP_BestScore})
+
+	var maxRotationOne = MaxRotationArray[pieceOne]
+	var maxRotationTwo = MaxRotationArray[pieceTwo]
+
+	for rotationOne in range(1, maxRotationOne + 1):
+		var blocksOne = AI_PieceBlocks[pieceOne][rotationOne]
+
+		var startYOne = 0
+		for block in blocksOne:
+			if (startYOne + block.y < 5):
+				startYOne = 5 - block.y
+
+		for posXOne in range(0, 12):
+			if (AI_CheckCollision(player, blocksOne, posXOne, startYOne) == true):
+				continue
+
+			var dropYOne = startYOne
+			while (AI_CheckCollision(player, blocksOne, posXOne, dropYOne + 1) == false):
+				dropYOne += 1
+				if (dropYOne >= 23):
+					break
+
+			var toppedOutOne = false
+			for block in blocksOne:
+				if (dropYOne + block.y < 5):
+					toppedOutOne = true
+					break
+			if (toppedOutOne == true):
+				continue
+
+			# Place piece 1 on playfield
+			for block in blocksOne:
+				PlayfieldNew[player][posXOne + block.x][dropYOne + block.y] = (pieceOne + 30)
+
+			# 2-ply lookahead: evaluate best placement of piece 2
+			var TEMP_BestScoreTwo = -9999999999.0
+			for rotationTwo in range(1, maxRotationTwo + 1):
+				var blocksTwo = AI_PieceBlocks[pieceTwo][rotationTwo]
+
+				var startYTwo = 0
+				for block in blocksTwo:
+					if (startYTwo + block.y < 5):
+						startYTwo = 5 - block.y
+
+				for posXTwo in range(0, 12):
+					if (AI_CheckCollision(player, blocksTwo, posXTwo, startYTwo) == true):
+						continue
+
+					var dropYTwo = startYTwo
+					while (AI_CheckCollision(player, blocksTwo, posXTwo, dropYTwo + 1) == false):
+						dropYTwo += 1
+						if (dropYTwo >= 23):
+							break
+
+					var toppedOutTwo = false
+					for block in blocksTwo:
+						if (dropYTwo + block.y < 5):
+							toppedOutTwo = true
+							break
+					if (toppedOutTwo == true):
+						continue
+
+					# Place piece 2 on playfield
+					for block in blocksTwo:
+						PlayfieldNew[player][posXTwo + block.x][dropYTwo + block.y] = (pieceTwo + 30)
+
+					var testValueTwo = AI_EvaluateGrid(player)
+					if (testValueTwo > TEMP_BestScoreTwo):
+						TEMP_BestScoreTwo = testValueTwo
+
+					# Remove piece 2
+					for block in blocksTwo:
+						PlayfieldNew[player][posXTwo + block.x][dropYTwo + block.y] = 0
+
+			# Remove piece 1
+			for block in blocksOne:
+				PlayfieldNew[player][posXOne + block.x][dropYOne + block.y] = 0
+
+			# Fallback if piece 2 had no valid placements
+			var candidateScore = TEMP_BestScoreTwo
+			if (candidateScore == -9999999999.0):
+				for block in blocksOne:
+					PlayfieldNew[player][posXOne + block.x][dropYOne + block.y] = (pieceOne + 30)
+				candidateScore = AI_EvaluateGrid(player) - 1000.0
+				for block in blocksOne:
+					PlayfieldNew[player][posXOne + block.x][dropYOne + block.y] = 0
+
+			if (candidateScore > TEMP_BestScore):
+				TEMP_BestScore = candidateScore
+				TEMP_BestX = posXOne
+				TEMP_BestRotation = rotationOne
+
+	return({"X": TEMP_BestX, "Rotation": TEMP_BestRotation, "Score": TEMP_BestScore})
+
 # Below A.I. Source Code Function Written By "JeZxLee"
 func ComputeComputerPlayerMove(player):
 	if (AIsystemToUse == 0): # Old A.I. By "JeZxLee"
@@ -1847,117 +2022,16 @@ func ComputeComputerPlayerMove(player):
 
 # URL To New A.I.:   https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
 # Enter Secret Code: "8889" In [Options] To Enable All 3 CPU Players A.I. Test Mode!
-	elif (AIsystemToUse == 1): # New A.I. Fixed By: "junaid_develops" - Fiverr.com
+	elif (AIsystemToUse == 1): # New 2-Ply Heuristic A.I. Fixed By: "junaid_develops" - Fiverr.com
 		if ( DoAnyPlayersHaveCompletedLine() == true ):
 			CPUComputedBestMove[player] = false
 			ResetAIVariables()
 			return
 
 		if (CPUComputedBestMove[player] == false):
-			for posX in range (0, 12):
-				for rot in range (1, MaxRotationArray[Piece[player]]+1):
-					MovePieceCollision[player][posX][rot] = true
-
-#-- Compute, prioritize, & store all player moves ------------------------------
-			for NewCPUPieceTestX in range (0, 12):
-				for NewCPURotationTest in range (1, MaxRotationArray[Piece[player]]+1):
-					TEMP_PieceRotation = PieceRotation[player]
-					TEMP_PiecePlayfieldX = PiecePlayfieldX[player]
-					TEMP_PiecePlayfieldY = PiecePlayfieldY[player]
-
-					PiecePlayfieldX[player] = NewCPUPieceTestX
-					PieceRotation[player] = NewCPURotationTest
-
-					MovePieceCollision[player][NewCPUPieceTestX][NewCPURotationTest] = false
-					if (PieceCollision(player) == CollisionNotTrue):
-						for posY in range(PiecePlayfieldY[player], 23):
-							PiecePlayfieldY[player] = posY
-							if ( PieceCollision(player) == CollisionWithPlayfield ):
-								PiecePlayfieldY[player]-=1
-
-								AddCurrentPieceToPlayfieldMemory(player, Fallen)
-
-								var heightTemp
-								var bump = []
-								bump.resize(13)
-								for bumpZero in range(13):
-									bump[bumpZero] = 0
-
-								for posX in range(2, 12):
-									heightTemp = 0
-									for posYtwo in range(23, 6, -1):
-										if (  (PlayfieldNew[player][posX][posYtwo] == 0) && ( (PlayfieldNew[player][posX][posYtwo-1] > 30 && PlayfieldNew[player][posX][posYtwo-1] < 40) )  ):
-											MoveTrappedHoles[player][NewCPUPieceTestX][NewCPURotationTest]+=1
-
-										if (PlayfieldNew[player][posX][posYtwo] > 30 && PlayfieldNew[player][posX][posYtwo] < 40):
-											heightTemp = (24-posYtwo)
-
-									if (PlayfieldNew[player][posX][5] > 30 && PlayfieldNew[player][posX][5] < 40 ):  heightTemp+=1
-
-									bump[posX] = heightTemp
-									MoveAggregateHeight[player][NewCPUPieceTestX][NewCPURotationTest]+= heightTemp
-
-								var checkBumps = 0
-								checkBumps+=abs(bump[2]-bump[3])
-								checkBumps+=abs(bump[3]-bump[4])
-								checkBumps+=abs(bump[4]-bump[5])
-								checkBumps+=abs(bump[5]-bump[6])
-								checkBumps+=abs(bump[6]-bump[7])
-								checkBumps+=abs(bump[7]-bump[8])
-								checkBumps+=abs(bump[8]-bump[9])
-								checkBumps+=abs(bump[9]-bump[10])
-								checkBumps+=abs(bump[10]-bump[11])
-
-								MoveBumpiness[player][NewCPUPieceTestX][NewCPURotationTest] = checkBumps
-
-								var boxTotal
-								for y in range(4, 24):
-									boxTotal = 0
-									for p in range(3):
-										for x in range (2, 12):
-											if ( (PlayfieldNew[p][x][y] > 30 && PlayfieldNew[p][x][y] < 40) ):
-												boxTotal+=1
-
-									if (boxTotal == 30):
-										MoveCompletedLines[player][NewCPUPieceTestX][NewCPURotationTest]+=1
-
-								DeleteCurrentPieceFromPlayfieldMemory(player, Temp)
-
-								PieceRotation[player] = TEMP_PieceRotation
-								PiecePlayfieldX[player] = TEMP_PiecePlayfieldX
-								PiecePlayfieldY[player] = TEMP_PiecePlayfieldY
-								
-								break
-					else:
-						CPUComputedBestMove[player] = false
-
-						MovePieceCollision[player][NewCPUPieceTestX][NewCPURotationTest] = true
-						PieceRotation[player] = TEMP_PieceRotation
-						PiecePlayfieldX[player] = TEMP_PiecePlayfieldX
-						PiecePlayfieldY[player] = TEMP_PiecePlayfieldY
-
-#-- Choose best move & rotation in either left or right direction ----------------------------------
-			var TEMP_BestValue = -9999999999.0
-			for posX in range (0, 12):
-				for rot in range (1, MaxRotationArray[Piece[player]]+1):
-					if (MovePieceCollision[player][posX][rot] == false):
-
-#						A.I. Algorithm By Yiyuan Lee
-						var testValue = ( (-0.510066 * MoveAggregateHeight[player][posX][rot])
-									+(0.760666 * MoveCompletedLines[player][posX][rot])
-									+(-0.35663 * MoveTrappedHoles[player][posX][rot])
-									+(-0.184483 * MoveBumpiness[player][posX][rot]) )
-
-						print("player=", player, " / posX=", posX, " / rot=", rot, " / testValue=", testValue, " / Height=", MoveAggregateHeight[player][posX][rot], " / Comp.Lines=", MoveCompletedLines[player][posX][rot], " / Trap.Holes=", MoveTrappedHoles[player][posX][rot], " / Bumpiness=", MoveBumpiness[player][posX][rot])
-
-						if (testValue >= TEMP_BestValue):
-							TEMP_BestValue = testValue
-							BestMoveX[player] = posX
-							BestRotation[player] = rot
-
-			print("BestMoveX=", BestMoveX[player], " / BestRotation=", BestRotation[player])
-			print("-----------------------------------------------------------------------------------")
-
+			var bestMove = AI_FindBestMove(player, Piece[player], NextPiece[player])
+			BestMoveX[player] = bestMove["X"]
+			BestRotation[player] = bestMove["Rotation"]
 			CPUComputedBestMove[player] = true
 			MovedToBestMove[player] = false
 
@@ -2220,6 +2294,7 @@ func _ready():
 	LogicCore.SecretCodeCombined = 0000
 
 	InitializePieceData()
+	AI_InitializePieceBlocks()
 
 	PlayfieldNew.resize(3)
 	for player in range(3):
