@@ -4,3 +4,6 @@ project_t-story/.godot/
 
 # macOS metadata
 .DS_Store
+
+# Godot export binaries & packages
+*.pck
