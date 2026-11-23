@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -30,8 +30,8 @@ var EffectsTotal = 11
 
 #----------------------------------------------------------------------------------------
 func _ready():
-	MusicVolume = 0.5
-	EffectsVolume = 0.25
+	MusicVolume = 0.75
+	EffectsVolume = 0.5
 
 	MusicPlayer = AudioStreamPlayer.new()
 	add_child(MusicPlayer)

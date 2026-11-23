@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -18,7 +18,7 @@
 # "LogicCore.gd"
 extends Node2D
 
-var Version = "Pre Retail Version 1.1.0"
+var Version = "Retail 1.1.1 Final"
 
 const EasyMode				= 0
 const NormalMode			= 1
@@ -197,9 +197,6 @@ var TEMP_PiecePlayfieldY
 
 var PlayerPlayfield = []
 var PlayerInputDone = []
-
-var PlayfieldsAlpha = 1.0
-var PlayfieldsAlphaDir = 0
 
 var ThereIsDanger = []
 var DangerVoiceTimer = 0
@@ -455,19 +452,14 @@ func ReadPlayerHeight(player):
 
 #----------------------------------------------------------------------------------------
 func ApplyDifficulty():
-	var numberOfComputerPlayers = 0
-	if (AllowComputerPlayers == 1):
-		if (PlayerInput[0] == InputCore.InputCPU):  numberOfComputerPlayers+=1
-		if (PlayerInput[2] == InputCore.InputCPU):  numberOfComputerPlayers+=1
-
 	if (GameMode == EasyMode):
-		LevelAdjust[0] = 10 - (numberOfComputerPlayers * 1)
+		LevelAdjust[0] = 10
 	elif (GameMode == NormalMode):
-		LevelAdjust[1] = 10 - (numberOfComputerPlayers * 1)
+		LevelAdjust[1] = 20
 	elif (GameMode == HardMode):
-		LevelAdjust[2] = 10 - (numberOfComputerPlayers * 1)
+		LevelAdjust[2] = 30
 	elif (GameMode == VeryHardMode):
-		LevelAdjust[3] = 10 - (numberOfComputerPlayers * 1)
+		LevelAdjust[3] = 40
 
 	if (SecretCodeCombined == 1000):
 		if (GameMode == EasyMode):
@@ -819,16 +811,12 @@ func CheckForCompletedLines(player):
 	if (numberOfCompletedLines > 0):
 		if (numberOfCompletedLines == 1):
 			Score[player] += (40 * (Level+1) * 10)
-			if (SecretCodeCombined != 2778):  TotalLines+=1
 		elif (numberOfCompletedLines == 2):
 			Score[player] += (100 * (Level+1) * 10)
-			if (SecretCodeCombined != 2778):  TotalLines+=2
 		elif (numberOfCompletedLines == 3):
 			Score[player] += (300 * (Level+1) * 10)
-			if (SecretCodeCombined != 2778):  TotalLines+=3
 		elif (numberOfCompletedLines == 4):
 			Score[player] += (1200 * (Level+1) * 10)
-			if (SecretCodeCombined != 2778):  TotalLines+=4
 			AudioCore.PlayEffect(player, 6)
 		ScoreChanged = true
 
@@ -909,6 +897,11 @@ func ClearCompletedLines(player):
 					for x in range(2, 12):
 						PlayfieldNew[playerIndex][x][4] = 0
 
+				if (SecretCodeCombined != 2778):
+					TotalLines+=1
+
+					if (SecretCodeCombined == 4321): TotalLines = LevelAdjust[GameMode]+1
+
 				AudioCore.PlayEffect(player, 5)
 
 	if thereWasACompletedLine == false:
@@ -983,10 +976,10 @@ func MovePieceLeft(player):
 		if (PieceCollision(player) == CollisionWithPlayfield):
 			PiecePlayfieldX[player]+=1
 	else:
-		if PieceMovementDelay[player] > -8:
+		if PieceMovementDelay[player] > -5:
 			PieceMovementDelay[player]-=1
 
-		if (PieceMovementDelay[player] == -1 || PieceMovementDelay[player] < -7):
+		if (PieceMovementDelay[player] == -1 || PieceMovementDelay[player] < -4):
 			PiecePlayfieldX[player]-=1
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
@@ -1006,10 +999,10 @@ func MovePieceRight(player):
 		if (PieceCollision(player) == CollisionWithPlayfield):
 			PiecePlayfieldX[player]-=1
 	else:
-		if PieceMovementDelay[player] < 8:
+		if PieceMovementDelay[player] < 5:
 			PieceMovementDelay[player]+=1
 
-		if (PieceMovementDelay[player] == 1 || PieceMovementDelay[player] > 7):
+		if (PieceMovementDelay[player] == 1 || PieceMovementDelay[player] > 4):
 			PiecePlayfieldX[player]+=1
 
 		if (PieceCollision(player) == CollisionWithPlayfield):
@@ -1502,10 +1495,10 @@ func CheckForNewPlayers():
 					PlayerInput[2] = InputCore.InputJoyThree
 
 		if (PlayerInput[0] != InputCore.InputNone):
-			VisualsCore.DrawSprite(137, (VisualsCore.ScreenWidth/2.0)+260, (VisualsCore.ScreenHeight/2.0)+9999, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+			VisualsCore.DrawSprite(137, (VisualsCore.ScreenWidth/2.0)+260, (VisualsCore.ScreenHeight/2.0)+9999, 3, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
 		if (PlayerInput[2] != InputCore.InputNone):
-			VisualsCore.DrawSprite(138, (VisualsCore.ScreenWidth/2.0)+260, (VisualsCore.ScreenHeight/2.0)+9999, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+			VisualsCore.DrawSprite(138, (VisualsCore.ScreenWidth/2.0)+260, (VisualsCore.ScreenHeight/2.0)+9999, 3, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
 		if (PlayerStatus[0] != GameOver && PlayerStatus[1] != GameOver && PlayerStatus[2] != GameOver):
 			PlayersCanJoinIn = false
@@ -1649,6 +1642,7 @@ func GetHumanPlayerMouseMoves(player):
 	if PieceDropTimer[player] > TimeToDropPiece[player]:
 		if PieceCollisionDown(player) != CollisionWithPiece:
 			MovePieceDown(player)
+			AudioCore.PlayEffect(player, 3)
 			PieceDropTimer[player] = 0
 
 	if InterfaceCore.ThisIconWasPressed(2+1) == true:
@@ -1702,7 +1696,7 @@ func GetHumanPlayerMouseMoves(player):
 #   /   \  ___|  \   __\\   __\  /   |   \   __\   \_____  \ |  |/ ___\|  |  \   __\
 #   \    \_\  \  ||  |   |  |   /    |    \  |     /        \|  / /_/  >   Y  \  |
 #    \______  /__||__|   |__|   \_______  /__|    /_______  /|__\___  /|___|  /__|
-#           \/                          \/                \/   /_____/      \/v100%
+#           \/                          \/                \/   /_____/      \/v110%
 #
 # Cooperative Puzzle A.I. By Yiyuan Lee, "JeZxLee", "junaid_develops" & "flairetic"
 #
@@ -2079,7 +2073,7 @@ func ComputeComputerPlayerMove(player):
 #               /   \  ___|  \   __\\   __\  /   |   \   __\   \_____  \ |  |/ ___\|  |  \   __\
 #               \    \_\  \  ||  |   |  |   /    |    \  |     /        \|  / /_/  >   Y  \  |
 #                \______  /__||__|   |__|   \_______  /__|    /_______  /|__\___  /|___|  /__|
-#                       \/                          \/                \/   /_____/      \/v100%
+#                       \/                          \/                \/   /_____/      \/v110%
 #
 
 #----------------------------------------------------------------------------------------
@@ -2105,7 +2099,7 @@ func AddIncompleteLineToBottom(player):
 	pass
 
 #----------------------------------------------------------------------------------------
-func CheckForLevelAdvance():	
+func CheckForLevelAdvance():
 	if ( TotalLines > (LevelAdjust[GameMode]) ):
 		TotalLines = 0
 		InputCore.DelayAllUserInput = 25

@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -25,7 +25,7 @@ var HighScoreScore = []
 var PlayerWithHighestScore
 var NewHighScoreRank
 
-const FILE_NAME = "user://TetriStory-Pre-Retail1aaj-game-data.json"
+const FILE_NAME = "user://TetriStory-Retail1_1_1-aab-game-data.json"
 var godot_Temp_Version = Engine.get_version_info()
 var GODOT_VERSION = str(godot_Temp_Version.major)+ "."+ str(godot_Temp_Version.minor)+ "."+ str(godot_Temp_Version.patch)+ "+"#godot_Temp_Version.string
 
@@ -108,7 +108,6 @@ func LoadOptionsAndHighScores():
 	if err != OK:
 		if ( OS.get_name() == "Windows" or OS.get_name() == "Linux" ):
 			VisualsCore.FullScreenMode = 1
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED, 0)
 		else:
 			VisualsCore.FullScreenMode = 0
 		return

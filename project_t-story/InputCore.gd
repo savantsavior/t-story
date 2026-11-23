@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -201,22 +201,6 @@ func _process(_delta):
 		DelayAllUserInput-=1
 		return
 
-	#if Input.is_action_pressed("KeyboardUp"):
-		#JoystickDirection[InputKeyboard] = JoyUp
-	#elif Input.is_action_pressed("KeyboardRight"):
-		#JoystickDirection[InputKeyboard] = JoyRight
-	#elif Input.is_action_pressed("KeyboardDown"):
-		#JoystickDirection[InputKeyboard] = JoyDown
-	#elif Input.is_action_pressed("KeyboardLeft"):
-		#JoystickDirection[InputKeyboard] = JoyLeft
-
-	#if (Input.is_action_pressed("ButtonOne")):
-		#if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonOne[InputKeyboard] = Pressed
-		#InputThatStartedNewGame = InputKeyboard
-#
-	#if (Input.is_action_pressed("ButtonTwo")):
-		#if (ScreensCore.ScreenToDisplay != ScreensCore.NewHighScoreScreen):  JoyButtonTwo[InputKeyboard] = Pressed
-
 	for index in range (0, 3):
 		if ( (FoundGamepadOne == true && index == 0) || (FoundGamepadTwo == true && index == 1)  || (FoundGamepadThree == true && index == 2) ):
 			for indexButton in range (0, 127):
@@ -337,8 +321,6 @@ func _input(event):
 	if (ScreensCore.ScreenToDisplay != ScreensCore.PlayingGameScreen):
 		MouseButtonLeftPressed = false
 
-	if ScreensCore.ScreenFadeStatus != ScreensCore.FadingIdle:  return
-
 	if event is InputEventKey:
 		if event.keycode == KEY_ESCAPE and event.pressed:
 			if ( (ScreensCore.ScreenToDisplay == ScreensCore.AboutScreen and LogicCore.GameWon == true) or (ScreensCore.ScreenToDisplay == ScreensCore.WonGameScreen) ):
@@ -351,8 +333,10 @@ func _input(event):
 		elif event.keycode == KEY_SPACE and event.pressed:
 			KeyboardSpacebarPressed = true
 			KeyTypedOnKeyboard = "_"
+			InputThatStartedNewGame = InputKeyboard
 		elif event.keycode == KEY_ENTER and event.pressed:
 			KeyboardEnterPressed = true
+			InputThatStartedNewGame = InputKeyboard
 		elif event.keycode == KEY_BACKSPACE and event.pressed:
 			KeyboardBackspacePressed = true
 
