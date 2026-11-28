@@ -1,4 +1,4 @@
-# Copyright 2027 Team: "BetaMax Heroes"
+# Copyright 2026 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -26,6 +26,7 @@ var PlayerWithHighestScore
 var NewHighScoreRank
 
 const FILE_NAME = "user://TetriStory-Retail1_1_1-aab-game-data.json"
+const OLD_FILE_NAME = "user://TetriStory-Pre-Retail1aaj-game-data.json"
 var godot_Temp_Version = Engine.get_version_info()
 var GODOT_VERSION = str(godot_Temp_Version.major)+ "."+ str(godot_Temp_Version.minor)+ "."+ str(godot_Temp_Version.patch)+ "+"#godot_Temp_Version.string
 
@@ -100,10 +101,35 @@ func ClearHighScores():
 	pass
 
 #----------------------------------------------------------------------------------------
+func FindOldSaveFile():
+	var oldSaveFileName = OLD_FILE_NAME.get_file()
+	var userDataBaseDirectory = OS.get_user_data_dir().get_base_dir()
+
+	var directory = DirAccess.open(userDataBaseDirectory)
+	if (directory == null):
+		return ""
+
+	for directoryName in directory.get_directories():
+		var oldSaveFilePath = userDataBaseDirectory.path_join(directoryName).path_join(oldSaveFileName)
+		if (FileAccess.file_exists(oldSaveFilePath)):
+			return oldSaveFilePath
+
+	return ""
+
+#----------------------------------------------------------------------------------------
 func LoadOptionsAndHighScores():
 	var config = ConfigFile.new()
 
 	var err = config.load(FILE_NAME)
+
+	if err != OK:
+		err = config.load(OLD_FILE_NAME)
+		if err != OK:
+			var oldSaveFilePath = FindOldSaveFile()
+			if (oldSaveFilePath != ""):
+				err = config.load(oldSaveFilePath)
+		if err == OK:
+			var _warnErase = config.save(FILE_NAME)
 
 	if err != OK:
 		if ( OS.get_name() == "Windows" or OS.get_name() == "Linux" ):
@@ -115,7 +141,7 @@ func LoadOptionsAndHighScores():
 	AudioCore.MusicVolume = config.get_value("Options", "MusicVolume")
 	AudioCore.EffectsVolume = config.get_value("Options", "EffectsVolume")
 	VisualsCore.FullScreenMode = config.get_value("Options", "FullScreenMode")
-	VisualsCore.KeepAspectRatio = config.get_value("Options", "KeepAspectRatio")
+	VisualsCore.KeepAspectRatio = bool(config.get_value("Options", "KeepAspectRatio"))
 	LogicCore.GameMode = config.get_value("Options", "GameMode")
 	LogicCore.AllowComputerPlayers = config.get_value("Options", "AllowComputerPlayers")
 	LogicCore.AIsystemToUse = config.get_value("Options", "AIsystemToUse")

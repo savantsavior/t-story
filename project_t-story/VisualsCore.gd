@@ -1,4 +1,4 @@
-# Copyright 2027 Team: "BetaMax Heroes"
+# Copyright 2026 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -187,11 +187,6 @@ func _ready():
 	Sprites.SpriteImage[106] = load("res://media/images/gui/Play.png")
 	Sprites.SpriteActive[106] = true
 
-	Sprites.SpriteImage[110] = load("res://media/images/gui/SpeakerOFF.png")
-	Sprites.SpriteActive[110] = true
-	Sprites.SpriteImage[111] = load("res://media/images/gui/SpeakerON.png")
-	Sprites.SpriteActive[111] = true
-
 	Sprites.SpriteImage[117] = load("res://media/images/gui/Exit3.png")
 	Sprites.SpriteActive[117] = true
 
@@ -298,25 +293,6 @@ func _ready():
 	Sprites.SpriteActive[172] = true
 	Sprites.SpriteImage[173] = load("res://media/images/story/Her.png")
 	Sprites.SpriteActive[173] = true
-
-	Sprites.SpriteImage[180] = load("res://media/images/story/BGs-Old/BG_Story-1.png")
-	Sprites.SpriteActive[180] = true
-	Sprites.SpriteImage[181] = load("res://media/images/story/BGs-Old/BG_Story-2.png")
-	Sprites.SpriteActive[181] = true
-	Sprites.SpriteImage[182] = load("res://media/images/story/BGs-Old/BG_Story-3.png")
-	Sprites.SpriteActive[182] = true
-	Sprites.SpriteImage[183] = load("res://media/images/story/BGs-Old/BG_Story-4.png")
-	Sprites.SpriteActive[183] = true
-	Sprites.SpriteImage[184] = load("res://media/images/story/BGs-Old/BG_Story-5.png")
-	Sprites.SpriteActive[184] = true
-	Sprites.SpriteImage[185] = load("res://media/images/story/BGs-Old/BG_Story-6.png")
-	Sprites.SpriteActive[185] = true
-	Sprites.SpriteImage[186] = load("res://media/images/story/BGs-Old/BG_Story-7.png")
-	Sprites.SpriteActive[186] = true
-	Sprites.SpriteImage[187] = load("res://media/images/story/BGs-Old/BG_Story-8.png")
-	Sprites.SpriteActive[187] = true
-	Sprites.SpriteImage[188] = load("res://media/images/story/BGs-Old/BG_Story-9.png")
-	Sprites.SpriteActive[188] = true
 
 	for index in range(0, 100):
 		Sprites.SpriteImage[200+index] = load("res://media/images/gui/NameInputButton2.png")
@@ -643,7 +619,7 @@ func LoadAboutScreenTexts():
 
 	AddAboutScreenText(LogicCore.Version, 1.0)
 
-	AddAboutScreenText("Copyright 2027 By:", 1.0)
+	AddAboutScreenText("Copyright 2026 By:", 1.0)
 	AddAboutScreenText("Team: ''BetaMax Heroes''", 1.0)
 
 	AddAboutScreenText("Original Concept By:", 0.0)

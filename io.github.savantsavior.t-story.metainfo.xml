@@ -7,7 +7,7 @@
     <project_license>MIT</project_license>
 
     <name>T-Story 110%</name>
-    <summary>Tetris-style falling blocks puzzle with with a story</summary>
+    <summary>Tetris-style falling blocks puzzle with a story</summary>
 
     <description>
     <p>
@@ -91,11 +91,11 @@
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/Second-TS3-Playing.png</image>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/First-TS-Playing.png</image>
             <caption>Fast-paced tetris-style gameplay with multiple modes</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/First-TS3-Title.png</image>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/Second-TS-Title.png</image>
             <caption>Title screen with vibrant arcade aesthetics</caption>
         </screenshot>
     </screenshots>
