@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvpuehj8rka75"
-path="res://.godot/imported/Second-LF-Title.png-e5c60bb77febb00bf0d680d3248302ba.ctex"
+uid="uid://bvm3m15oceent"
+path="res://.godot/imported/Board3PlayerNewBG-Old.png-860ab77c063537b8740e6a3e0a2d5244.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Flatpak_Info/Second-LF-Title.png"
-dest_files=["res://.godot/imported/Second-LF-Title.png-e5c60bb77febb00bf0d680d3248302ba.ctex"]
+source_file="res://media/images/playing/Board3PlayerNewBG-Old.png"
+dest_files=["res://.godot/imported/Board3PlayerNewBG-Old.png-860ab77c063537b8740e6a3e0a2d5244.ctex"]
 
 [params]
 

@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,31 +17,41 @@
 #
 # ------------------------------------------------------------------------------------------------
 #                              Cross-Platform / M.I.T. Open-Source
-#           "Grand National GNX" v3 Godot Engine 4.7.1+ Stable 2D Video Game Framework
+#           "Grand National GNX" v4 Godot Engine 4.7.2+ Stable 2D Video Game Framework
 # ------------------------------------------------------------------------------------------------
-#                                                           TM
-#                               "Fight To Win, Win For Love!"
+#                                                            TM
+#                                "Fight To Win, Win For Love!"
 #  ___________                     _________ __                         ____ ___________  _   /\TM
 #  \__    ___/                    /   _____//  |_  ___________ ___.__. /_   /_   \   _  \/ \ / /
 #    |    |                       \_____  \\   __\/  _ \_  __ <   |  |  |   ||   /  /_\  \_// /_
 #    |    |                       /        \|  | (  <_> )  | \/\___  |  |   ||   \  \_/   \/ // \
 #    |____|                      /_______  /|__|  \____/|__|   / ____|  |___||___|\_____  / / \_/
-#                                        \/          TM        \/           T U R B O   \/\/
-#                                       "T-Story 110%"
-#                                @>-/---------- ---------\-<@
-#                    Pass To Junaid (Fix New A.I.) - Retail Version 1.1.0
-#                            [ LogicCore.gd / Start Line 1848 ]
+#                                        \/           TM       \/           T U R B O   \/\/
+#                                        "T-Story 110%"
+#                                 @>-/---------- ---------\-<@
+#                                      Retail 1.1.1 Final
 #
-#                                  Linux Flatpak On Flathub
-#                       HTML5 Enabled Desktop/Laptop Internet Browsers
+#                                  Valve's Steam Game Client
+#                                   Linux Flatpak On Flathub
+#                         HTML5 Enabled Desktop/Laptop Internet Browsers
 #
-#                          (C)opyright 2026 - Team: "BetaMax Heroes"
+#                           (C)opyright 2027 - Team: "BetaMax Heroes"
 # ------------------------------------------------------------------------------------------------
 extends Node2D
 
 #----------------------------------------------------------------------------------------
 func _ready():
 	VisualsCore.SetFramesPerSecond(30)
+
+	if (ScreensCore.OperatingSys == ScreensCore.OSHTMLFive):  VisualsCore.FullScreenMode = 0
+
+	VisualsCore.MonitorScreenSize = DisplayServer.screen_get_size(0)
+	var ratio: float = ( float(VisualsCore.MonitorScreenSize.x) / float(VisualsCore.MonitorScreenSize.y) )
+	var sixteenByNineRatio: float = 1.77777777777778
+	if is_equal_approx(ratio, sixteenByNineRatio):
+		VisualsCore.KeepAspectRatio = false
+	else:
+		VisualsCore.KeepAspectRatio = true
 
 	DataCore.LoadOptionsAndHighScores()
 

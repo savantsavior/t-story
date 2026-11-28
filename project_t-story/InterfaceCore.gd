@@ -1,4 +1,4 @@
-# Copyright 2026 Team: "BetaMax Heroes"
+# Copyright 2027 Team: "BetaMax Heroes"
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 # and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -76,7 +76,7 @@ func InitializeGUI(createTexts):
 		Buttons.ButtonImageIndex.append(40+index)
 		
 		if createTexts == true:
-			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, ButtonText[index], 0, -99999, 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+			VisualsCore.DrawText(VisualsCore.TextCurrentIndex, ButtonText[index], 0, -99999, 4, 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 		
 		Buttons.ButtonTextIndex.append(index)
 		Buttons.ButtonIndex.append(-1)
@@ -165,16 +165,16 @@ func DrawAllButtons():
 		if Buttons.ButtonIndex[index] > -1:
 			if Buttons.ButtonAnimationTimer[index] == 1:
 				Buttons.ButtonScale[index] = 0.95
-				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 0, 19, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 4, 1, 0, 19, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 			elif Buttons.ButtonAnimationTimer[index] == 0:
 				Buttons.ButtonScale[index] = 1.0
-				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+				VisualsCore.DrawText(Buttons.ButtonIndex[index], ButtonText[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenX[Buttons.ButtonIndex[index]], VisualsCore.Texts.TextScreenY[Buttons.ButtonIndex[index]], 4, 1, 0, 21, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 
-			VisualsCore.DrawSprite(40+index, Buttons.ButtonScreenX[index], Buttons.ButtonScreenY[index], Buttons.ButtonScale[index], Buttons.ButtonScale[index], 0.0, 1.0, 1.0, 1.0, 1.0)
+			VisualsCore.DrawSprite(40+index, Buttons.ButtonScreenX[index], Buttons.ButtonScreenY[index], 4, Buttons.ButtonScale[index], Buttons.ButtonScale[index], 0.0, 1.0, 1.0, 1.0, 1.0)
 
 			if (index == ButtonSelectedByKeyboard && NumberOfButtonsOnScreen > 1):
-				VisualsCore.DrawSprite(50, (VisualsCore.ScreenWidth/2.0)-154.0, Buttons.ButtonScreenY[index], 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
-				VisualsCore.DrawSprite(51, (VisualsCore.ScreenWidth/2.0)+154.0, Buttons.ButtonScreenY[index], 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(50, (VisualsCore.ScreenWidth/2.0)-154.0, Buttons.ButtonScreenY[index], 4, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(51, (VisualsCore.ScreenWidth/2.0)+154.0, Buttons.ButtonScreenY[index], 4, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0)
 
 		var textHeight = VisualsCore.Texts.TextImage[index].get_theme_font("normal_font").get_string_size(VisualsCore.Texts.TextImage[index].text).y
 		VisualsCore.Texts.TextImage[Buttons.ButtonIndex[index]].global_position.y = (Buttons.ButtonScreenY[index]-(textHeight / 2) - 12)
@@ -284,28 +284,28 @@ func DrawAllArrowSets():
 
 	for index in range(0, NumberOfArrowSetsOnScreen):
 		if ArrowSets.ArrowSetIndex[index] > -1:
-			VisualsCore.DrawSprite(70+(index*2), VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
-			VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+			VisualsCore.DrawSprite(70+(index*2), VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 4, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+			VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 4, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
 			if ArrowSets.ArrowSetLeftAnimationTimer[(index*2)] == 3:
-				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 0.85, 0.85, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 4, 0.85, 0.85, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetLeftAnimationTimer[(index*2)] == 2:
-				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 0.9, 0.9, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 4, 0.9, 0.9, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetLeftAnimationTimer[(index*2)] == 1:
-				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 0.95, 0.95, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 4, 0.95, 0.95, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetLeftAnimationTimer[(index*2)] == 0:
-				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(71+(index*2), 30, ArrowSets.ArrowSetScreenY[index], 4, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
 			if ArrowSets.ArrowSetRightAnimationTimer[(index*2)] == 3:
-				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 0.85, 0.85, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 4, 0.85, 0.85, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetRightAnimationTimer[(index*2)] == 2:
-				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 0.9, 0.9, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 4, 0.9, 0.9, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetRightAnimationTimer[(index*2)] == 1:
-				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 0.95, 0.95, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 4, 0.95, 0.95, 0, 1.0, 1.0, 1.0, 1.0)
 			elif ArrowSets.ArrowSetRightAnimationTimer[(index*2)] == 0:
-				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
+				VisualsCore.DrawSprite(70+(index*2),  VisualsCore.ScreenWidth-30, ArrowSets.ArrowSetScreenY[index], 4, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 1.0)
 
-	VisualsCore.DrawSprite(60, VisualsCore.ScreenWidth/2.0, ArrowSets.ArrowSetScreenY[ArrowSetSelectedByKeyboard], 1.0, 1.0, 0, 1.0, 1.0, 1.0, 0.3)
+	VisualsCore.DrawSprite(60, VisualsCore.ScreenWidth/2.0, ArrowSets.ArrowSetScreenY[ArrowSetSelectedByKeyboard], 4, 1.0, 1.0, 0, 1.0, 1.0, 1.0, 0.3)
 
 	pass
 
@@ -386,7 +386,7 @@ func CreateIcon(spriteIndex, screenX, screenY, text):
 	RenderingServer.canvas_item_set_transform(VisualsCore.Sprites.ci_rid[Icons.IconSprite[NumberOfIconsOnScreen]], Transform2D(0.0, Vector2(1.0, 1.0), 0.0, Vector2(VisualsCore.Sprites.SpriteScreenX[Icons.IconSprite[NumberOfIconsOnScreen]] - (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[NumberOfIconsOnScreen]] / 2.0), VisualsCore.Sprites.SpriteScreenY[Icons.IconSprite[NumberOfIconsOnScreen]] - (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[NumberOfIconsOnScreen]] / 2.0))))
 
 	Icons.IconText[NumberOfIconsOnScreen] = text
-	Icons.IconTextIndex[NumberOfIconsOnScreen] = VisualsCore.DrawText(VisualsCore.TextCurrentIndex, text, (screenX-3.0)-(VisualsCore.ScreenWidth/2.0), screenY-9, 1, 0, 35, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
+	Icons.IconTextIndex[NumberOfIconsOnScreen] = VisualsCore.DrawText(VisualsCore.TextCurrentIndex, text, (screenX-3.0)-(VisualsCore.ScreenWidth/2.0), screenY-9, 4, 1, 0, 35, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0)
 
 	NumberOfIconsOnScreen+=1
 
@@ -402,6 +402,8 @@ func DrawAllIcons():
 				Icons.IconScreenX[index] = -9999
 				Icons.IconScreenY[index] = -9999
 				RenderingServer.canvas_item_set_transform(VisualsCore.Sprites.ci_rid[Icons.IconSprite[index]], Transform2D(0.0, Vector2(0.85, 0.85), 0.0, Vector2(-9999, -9999)))#Vector2(Icons.IconScreenX[index] - ((VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[index]]*0.85) / 2.0), Icons.IconScreenY[index] - ((VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[index]]*0.85) / 2.0))))
+
+		RenderingServer.canvas_item_set_z_index(VisualsCore.Sprites.ci_rid[Icons.IconSprite[index]], 4)
 
 		RenderingServer.canvas_item_set_transform(VisualsCore.Sprites.ci_rid[Icons.IconSprite[index]], Transform2D(0.0, Vector2(1.0, 1.0), 0.0, Vector2(Icons.IconScreenX[index] - (VisualsCore.Sprites.SpriteImageWidth[Icons.IconSprite[index]] / 2.0), Icons.IconScreenY[index] - (VisualsCore.Sprites.SpriteImageHeight[Icons.IconSprite[index]] / 2.0))))
 

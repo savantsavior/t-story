@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="\"T-Story 110%[TM]\" - Retail Version 1.1.0 - By Team: \"BetaMax Heroes\""
+config/name="\"T-Story 110%[TM]\" - Retail Version 1.1.1 Final - By Team: \"BetaMax Heroes\""
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.7")
 run/max_fps=30

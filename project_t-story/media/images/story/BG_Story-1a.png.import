@@ -2,21 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bpyrkgk76ptc6"
-path="res://.godot/imported/LF_Icon_256x256.png-4152035fa938e4bffd1dfa83866c2b1f.ctex"
+uid="uid://bhupdt51jkpuq"
+path="res://.godot/imported/BG_Story-1a.png-07a453343cb922ecb5882c73a4d0d98b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Flatpak_Info/LF_Icon_256x256.png"
-dest_files=["res://.godot/imported/LF_Icon_256x256.png-4152035fa938e4bffd1dfa83866c2b1f.ctex"]
+source_file="res://media/images/story/BG_Story-1a.png"
+dest_files=["res://.godot/imported/BG_Story-1a.png-07a453343cb922ecb5882c73a4d0d98b.ctex"]
 
 [params]
 
 compress/mode=0
 compress/high_quality=false
+compress/high_quality_mode=0
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
@@ -25,6 +26,8 @@ compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false
 mipmaps/limit=-1
+mipmaps/preserve_alpha_test_coverage=false
+mipmaps/alpha_test_threshold=0.5
 roughness/mode=0
 roughness/src_normal=""
 process/channel_remap/red=0
