@@ -91,12 +91,28 @@
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/First-TS-Playing.png</image>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/1-TS-Playing.png</image>
             <caption>Fast-paced tetris-style gameplay with multiple modes</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/savantsavior/t-story/main/project_t-story/Screen_Shots/Second-TS-Title.png</image>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/2-TS-Title.png</image>
             <caption>Title screen with vibrant arcade aesthetics</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/3-TS-Story.png</image>
+            <caption>Story cutscenes progress after each cleared level</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/4-TS-Options.png</image>
+            <caption>Options for music volume, difficulty, and screen modes</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/5-TS-High_Scores.png</image>
+            <caption>High score tables for every difficulty mode</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/savantsavior/t-story/8a2f394b6e94cfe83ee73caa818a881e5a8a28e4/Flatpak_Info/6-TS-Game_Controllers.png</image>
+            <caption>Local multiplayer with keyboard, mouse, and game controllers</caption>
         </screenshot>
     </screenshots>
 
